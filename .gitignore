@@ -43,3 +43,6 @@ next-env.d.ts
 # app data
 /data/
 /logs/*.log
+
+# personal watchlist config (copy seed.json.example → seed.json to initialize)
+/seed.json

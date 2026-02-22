@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Initial Setup
+
+```bash
+# seed.json is gitignored (personal watchlist). Copy the example to initialize:
+cp seed.json.example seed.json
+```
+
 ## Commands
 
 ```bash

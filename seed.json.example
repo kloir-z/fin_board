@@ -1,0 +1,22 @@
+[
+  {
+    "name": "マーケット概況",
+    "tickers": [
+      { "symbol": "^GSPC",    "name": "S&P 500",           "market": "US" },
+      { "symbol": "^IXIC",    "name": "NASDAQ Composite",  "market": "US" },
+      { "symbol": "^DJI",     "name": "Dow Jones",         "market": "US" },
+      { "symbol": "^N225",    "name": "日経平均",           "market": "JP" },
+      { "symbol": "USDJPY=X", "name": "USD/JPY",           "market": "JP" },
+      { "symbol": "BTC-USD",  "name": "Bitcoin",           "market": "US" }
+    ]
+  },
+  {
+    "name": "マイウォッチリスト",
+    "tickers": [
+      { "symbol": "AAPL", "name": "Apple Inc.",       "market": "US" },
+      { "symbol": "MSFT", "name": "Microsoft Corp.",  "market": "US" },
+      { "symbol": "NVDA", "name": "NVIDIA Corp.",     "market": "US" },
+      { "symbol": "7203.T", "name": "トヨタ自動車",  "market": "JP" }
+    ]
+  }
+]
