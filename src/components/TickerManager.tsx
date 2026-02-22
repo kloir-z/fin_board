@@ -22,6 +22,7 @@ interface TickerManagerProps {
   isOpen: boolean
   onClose: () => void
   onChange: () => void
+  watchlistId: number | null
 }
 
 function SortableTicker({
@@ -70,7 +71,7 @@ function SortableTicker({
   )
 }
 
-export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps) {
+export function TickerManager({ isOpen, onClose, onChange, watchlistId }: TickerManagerProps) {
   const [tickers, setTickers] = useState<Ticker[]>([])
   const [symbol, setSymbol] = useState('')
   const [name, setName] = useState('')
@@ -84,14 +85,15 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
   )
 
   useEffect(() => {
-    if (!isOpen) return
-    fetch('/api/tickers')
+    if (!isOpen || watchlistId === null) return
+    fetch(`/api/tickers?watchlistId=${watchlistId}`)
       .then((r) => r.json())
       .then((json) => setTickers(json.data ?? []))
       .catch(() => setTickers([]))
-  }, [isOpen])
+  }, [isOpen, watchlistId])
 
   const handleAdd = async () => {
+    if (watchlistId === null) return
     const sym = symbol.trim().toUpperCase()
     const nm = name.trim() || sym
     if (!sym) {
@@ -105,7 +107,7 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
       const res = await fetch('/api/tickers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbol: sym, name: nm, market }),
+        body: JSON.stringify({ symbol: sym, name: nm, market, watchlistId }),
       })
       const json = await res.json()
       if (!json.success) {
@@ -124,11 +126,12 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
   }
 
   const handleRemove = async (sym: string) => {
+    if (watchlistId === null) return
     try {
       const res = await fetch('/api/tickers', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ symbol: sym }),
+        body: JSON.stringify({ symbol: sym, watchlistId }),
       })
       const json = await res.json()
       if (!json.success) {
@@ -143,6 +146,7 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    if (watchlistId === null) return
     const { active, over } = event
     if (!over || active.id === over.id) return
 
@@ -158,7 +162,7 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
       const res = await fetch('/api/tickers', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order: newOrder.map((t) => t.symbol) }),
+        body: JSON.stringify({ order: newOrder.map((t) => t.symbol), watchlistId }),
       })
       const json = await res.json()
       if (!json.success) throw new Error(json.error)
@@ -199,7 +203,10 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
               type="text"
               placeholder="Symbol (e.g. AAPL, ^N225, N225)"
               value={symbol}
-              onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+              onChange={(e) => setSymbol(e.target.value)}
+              autoCapitalize="characters"
+              autoCorrect="off"
+              autoComplete="off"
               className="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 text-sm border border-gray-600 focus:outline-none focus:border-blue-500"
               aria-label="Ticker symbol"
             />
@@ -228,7 +235,7 @@ export function TickerManager({ isOpen, onClose, onChange }: TickerManagerProps)
             />
             <button
               onClick={handleAdd}
-              disabled={isAdding}
+              disabled={isAdding || watchlistId === null}
               className="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-sm font-medium touch-manipulation"
             >
               Add

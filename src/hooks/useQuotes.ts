@@ -13,15 +13,16 @@ interface UseQuotesResult {
 
 const POLL_INTERVAL_MS = 60_000
 
-export function useQuotes(): UseQuotesResult {
+export function useQuotes(watchlistId: number | null): UseQuotesResult {
   const [quotes, setQuotes] = useState<Quote[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   const fetchQuotes = useCallback(async () => {
+    if (watchlistId === null) return
     try {
-      const res = await fetch('/api/quotes')
+      const res = await fetch(`/api/quotes?watchlistId=${watchlistId}`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json = await res.json()
       if (!json.success) throw new Error(json.error ?? 'Unknown error')
@@ -33,9 +34,11 @@ export function useQuotes(): UseQuotesResult {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [watchlistId])
 
   useEffect(() => {
+    setIsLoading(true)
+    setQuotes([])
     fetchQuotes()
     const interval = setInterval(fetchQuotes, POLL_INTERVAL_MS)
     return () => clearInterval(interval)

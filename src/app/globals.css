@@ -8,3 +8,7 @@ body {
 button {
   touch-action: manipulation;
 }
+
+a#tv-attr-logo {
+  display: none !important;
+}

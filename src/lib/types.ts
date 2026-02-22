@@ -1,5 +1,13 @@
+export interface Watchlist {
+  id: number
+  name: string
+  position: number | null
+  createdAt: string
+}
+
 export interface Ticker {
   id: number
+  watchlistId: number
   symbol: string
   name: string
   market: 'US' | 'JP'

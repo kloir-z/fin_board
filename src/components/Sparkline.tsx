@@ -1,18 +1,37 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { createChart, ColorType, AreaSeries, type UTCTimestamp } from 'lightweight-charts'
-import type { ChartPoint } from '@/lib/types'
+import {
+  createChart,
+  ColorType,
+  CrosshairMode,
+  LineStyle,
+  AreaSeries,
+  type UTCTimestamp,
+  type MouseEventParams,
+} from 'lightweight-charts'
+import type { ChartPoint, Timeframe } from '@/lib/types'
+import { formatPrice, formatChartDate } from '@/lib/formatters'
 
 interface SparklineProps {
   data: ChartPoint[]
   isPositive: boolean
   height?: number
+  timeframe: Timeframe
+  currency: string
 }
 
-export function Sparkline({ data, isPositive, height = 60 }: SparklineProps) {
+interface TooltipState {
+  visible: boolean
+  x: number
+  time: number
+  value: number
+}
+
+export function Sparkline({ data, isPositive, height = 60, timeframe, currency }: SparklineProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, time: 0, value: 0 })
 
   // Lazy render: only create chart when card is visible in viewport
   useEffect(() => {
@@ -41,7 +60,17 @@ export function Sparkline({ data, isPositive, height = 60 }: SparklineProps) {
         textColor: 'transparent',
       },
       grid: { vertLines: { visible: false }, horzLines: { visible: false } },
-      crosshair: { horzLine: { visible: false }, vertLine: { visible: false } },
+      crosshair: {
+        mode: CrosshairMode.Normal,
+        horzLine: { visible: false },
+        vertLine: {
+          visible: true,
+          style: LineStyle.Dashed,
+          width: 1,
+          color: `${color}88`,
+          labelVisible: false,
+        },
+      },
       leftPriceScale: { visible: false },
       rightPriceScale: { visible: false },
       timeScale: { visible: false, borderVisible: false },
@@ -64,6 +93,26 @@ export function Sparkline({ data, isPositive, height = 60 }: SparklineProps) {
       chart.timeScale().fitContent()
     }
 
+    const handleCrosshairMove = (param: MouseEventParams) => {
+      if (!param.time || !param.point) {
+        setTooltip((prev) => ({ ...prev, visible: false }))
+        return
+      }
+      const entry = param.seriesData.get(series)
+      if (!entry || !('value' in entry)) {
+        setTooltip((prev) => ({ ...prev, visible: false }))
+        return
+      }
+      setTooltip({
+        visible: true,
+        x: param.point.x,
+        time: param.time as number,
+        value: (entry as { value: number }).value,
+      })
+    }
+
+    chart.subscribeCrosshairMove(handleCrosshairMove)
+
     const resizeObserver = new ResizeObserver(() => {
       chart.resize(container.clientWidth, height)
     })
@@ -71,9 +120,30 @@ export function Sparkline({ data, isPositive, height = 60 }: SparklineProps) {
 
     return () => {
       resizeObserver.disconnect()
+      chart.unsubscribeCrosshairMove(handleCrosshairMove)
       chart.remove()
     }
   }, [data, isPositive, height, isVisible])
 
-  return <div ref={containerRef} style={{ height }} />
+  return (
+    <div ref={containerRef} style={{ position: 'relative', height }}>
+      {tooltip.visible && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 'calc(100% + 4px)',
+            left: tooltip.x,
+            transform: 'translateX(-50%)',
+            pointerEvents: 'none',
+            zIndex: 10,
+            whiteSpace: 'nowrap',
+          }}
+          className="bg-gray-900 border border-gray-600 rounded px-2 py-1 text-xs text-white shadow-lg"
+        >
+          <div className="text-gray-400">{formatChartDate(tooltip.time, timeframe)}</div>
+          <div className="font-semibold">{formatPrice(tooltip.value, currency)}</div>
+        </div>
+      )}
+    </div>
+  )
 }

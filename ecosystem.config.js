@@ -8,6 +8,7 @@ module.exports = {
         PORT: 3000,
         NODE_ENV: 'production',
         HOSTNAME: '0.0.0.0', // Listen on all interfaces (required for Tailscale)
+        DB_PATH: '/home/user/code/fin_board/data/fin_board.db',
       },
       max_memory_restart: '512M',
       instances: 1,

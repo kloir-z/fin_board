@@ -7,13 +7,15 @@ jest.mock('@/hooks/useChartData', () => ({
   useChartData: () => ({ data: [], isLoading: false }),
 }))
 
-// Mock Sparkline to avoid lightweight-charts canvas issues in jsdom
+// Mock Sparkline as a spy to verify props passed to it
+const MockSparkline = jest.fn().mockImplementation(() => <div data-testid="sparkline" />)
 jest.mock('@/components/Sparkline', () => ({
-  Sparkline: () => <div data-testid="sparkline" />,
+  Sparkline: (props: Record<string, unknown>) => MockSparkline(props),
 }))
 
 const positiveQuote: Quote = {
   symbol: 'AAPL',
+  name: 'Apple Inc.',
   price: 180.5,
   previousClose: 178.0,
   change: 2.5,
@@ -25,6 +27,7 @@ const positiveQuote: Quote = {
 
 const negativeQuote: Quote = {
   symbol: '7203.T',
+  name: 'Toyota Motor',
   price: 3100,
   previousClose: 3200,
   change: -100,
@@ -33,6 +36,10 @@ const negativeQuote: Quote = {
   marketState: 'CLOSED',
   updatedAt: new Date().toISOString(),
 }
+
+beforeEach(() => {
+  MockSparkline.mockClear()
+})
 
 describe('StockCard', () => {
   it('renders ticker symbol', () => {
@@ -50,15 +57,15 @@ describe('StockCard', () => {
     expect(screen.getByText('¥3,100')).toBeInTheDocument()
   })
 
-  it('shows positive change in green', () => {
+  it('shows positive change percent in green', () => {
     render(<StockCard quote={positiveQuote} />)
-    const changeEl = screen.getByText(/\+2\.50/)
+    const changeEl = screen.getByText(/\+1\.40%/)
     expect(changeEl).toHaveClass('text-emerald-400')
   })
 
-  it('shows negative change in red', () => {
+  it('shows negative change percent in red', () => {
     render(<StockCard quote={negativeQuote} />)
-    const changeEl = screen.getByText(/-100/)
+    const changeEl = screen.getByText(/-3\.13%/)
     expect(changeEl).toHaveClass('text-red-400')
   })
 
@@ -77,5 +84,34 @@ describe('StockCard', () => {
     render(<StockCard quote={positiveQuote} />)
     fireEvent.click(screen.getByText('1M'))
     expect(screen.getByText('1M').closest('button')).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('passes timeframe prop to Sparkline', () => {
+    render(<StockCard quote={positiveQuote} />)
+    expect(MockSparkline).toHaveBeenCalledWith(
+      expect.objectContaining({ timeframe: '1D' })
+    )
+  })
+
+  it('passes currency prop to Sparkline', () => {
+    render(<StockCard quote={positiveQuote} />)
+    expect(MockSparkline).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: 'USD' })
+    )
+  })
+
+  it('passes updated timeframe to Sparkline after change', () => {
+    render(<StockCard quote={positiveQuote} />)
+    fireEvent.click(screen.getByText('1W'))
+    expect(MockSparkline).toHaveBeenLastCalledWith(
+      expect.objectContaining({ timeframe: '1W' })
+    )
+  })
+
+  it('passes JPY currency to Sparkline for JPY quote', () => {
+    render(<StockCard quote={negativeQuote} />)
+    expect(MockSparkline).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: 'JPY' })
+    )
   })
 })

@@ -1,16 +1,34 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { runSeedIfEmpty } from '@/lib/seed'
 import { createTickerRepository } from '@/repositories/ticker-repository'
+import { createWatchlistRepository } from '@/repositories/watchlist-repository'
 import { createCacheOrchestrator } from '@/lib/cache'
 import type { ApiResponse, Quote } from '@/lib/types'
 
-export async function GET(): Promise<NextResponse<ApiResponse<Quote[]>>> {
+export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse<Quote[]>>> {
   try {
     const db = getDb()
     runSeedIfEmpty()
+
+    // Resolve watchlistId (default to first watchlist)
+    const param = req.nextUrl.searchParams.get('watchlistId')
+    let watchlistId: number
+    if (!param) {
+      const watchlists = createWatchlistRepository(db).findAll()
+      if (watchlists.length === 0) {
+        return NextResponse.json({ success: true, data: [] })
+      }
+      watchlistId = watchlists[0].id
+    } else {
+      watchlistId = Number(param)
+      if (!Number.isInteger(watchlistId) || watchlistId <= 0) {
+        return NextResponse.json({ success: false, error: 'Invalid watchlistId' }, { status: 400 })
+      }
+    }
+
     const tickerRepo = createTickerRepository(db)
-    const tickers = tickerRepo.findAll()
+    const tickers = tickerRepo.findAll(watchlistId)
 
     if (tickers.length === 0) {
       return NextResponse.json({ success: true, data: [] })
