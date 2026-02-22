@@ -38,7 +38,12 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
         <div className="font-semibold text-white text-xs shrink-0">{formatPrice(quote.price, quote.currency)}</div>
       </div>
       <div className="flex items-center justify-between gap-1">
-        <div className="text-[10px] text-gray-500 shrink-0">{quote.symbol}</div>
+        <a
+          href={`https://finance.yahoo.co.jp/quote/${quote.symbol}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] text-gray-500 shrink-0 relative z-20 hover:text-gray-300 hover:underline"
+        >{quote.symbol}</a>
         <div className={`text-[10px] ${changeColor} shrink-0`}>
           {quote.changePercent >= 0 ? '+' : ''}{quote.changePercent.toFixed(2)}%
         </div>
