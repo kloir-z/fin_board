@@ -7,12 +7,14 @@ import { StockGrid } from '@/components/StockGrid'
 import { StockGridSkeleton } from '@/components/StockCardSkeleton'
 import { RefreshIndicator } from '@/components/RefreshIndicator'
 import { TickerManager } from '@/components/TickerManager'
+import type { Timeframe } from '@/lib/types'
 
 export default function DashboardPage() {
   const { watchlists, activeId, setActiveId, createWatchlist, renameWatchlist, deleteWatchlist, reload } =
     useWatchlists()
   const { quotes, isLoading, error, lastUpdated, refresh } = useQuotes(activeId)
   const [managerOpen, setManagerOpen] = useState(false)
+  const [globalTimeframe, setGlobalTimeframe] = useState<Timeframe>('1D')
 
   const handleTickerChange = () => {
     refresh()
@@ -36,6 +38,8 @@ export default function DashboardPage() {
         onCreateWatchlist={async (name) => { await createWatchlist(name) }}
         onRenameWatchlist={renameWatchlist}
         onDeleteWatchlist={handleDeleteWatchlist}
+        globalTimeframe={globalTimeframe}
+        onGlobalTimeframeChange={setGlobalTimeframe}
       />
 
       {error && (
@@ -47,7 +51,7 @@ export default function DashboardPage() {
       {isLoading && quotes.length === 0 ? (
         <StockGridSkeleton count={10} />
       ) : (
-        <StockGrid quotes={quotes} watchlistId={activeId} />
+        <StockGrid quotes={quotes} watchlistId={activeId} globalTimeframe={globalTimeframe} />
       )}
 
       <TickerManager

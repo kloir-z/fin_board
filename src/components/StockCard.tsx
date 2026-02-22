@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Quote, Timeframe } from '@/lib/types'
 import { TimeframeSelector } from './TimeframeSelector'
 import { Sparkline } from './Sparkline'
@@ -9,6 +9,7 @@ import { formatPrice } from '@/lib/formatters'
 
 interface StockCardProps {
   quote: Quote
+  globalTimeframe?: Timeframe
 }
 
 function formatChange(change: number, changePercent: number, currency: string): string {
@@ -19,8 +20,12 @@ function formatChange(change: number, changePercent: number, currency: string): 
   return `${sign}${change.toFixed(2)} (${sign}${changePercent.toFixed(2)}%)`
 }
 
-export function StockCard({ quote }: StockCardProps) {
-  const [timeframe, setTimeframe] = useState<Timeframe>('1D')
+export function StockCard({ quote, globalTimeframe }: StockCardProps) {
+  const [timeframe, setTimeframe] = useState<Timeframe>(globalTimeframe ?? '1D')
+
+  useEffect(() => {
+    if (globalTimeframe) setTimeframe(globalTimeframe)
+  }, [globalTimeframe])
   const { data } = useChartData(quote.symbol, timeframe)
 
   const isPositive = quote.change >= 0

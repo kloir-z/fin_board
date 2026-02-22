@@ -125,8 +125,38 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
     }
   }, [data, isPositive, height, isVisible])
 
+  const sparklineStats = isVisible && data.length >= 2 ? (() => {
+    const lastValue = data[data.length - 1].value
+    const values = data.map((d) => d.value)
+    const maxVal = Math.max(...values)
+    const minVal = Math.min(...values)
+    // % relative to current (last) price — how far were the period high/low from now
+    const maxPct = ((maxVal - lastValue) / lastValue) * 100
+    const minPct = ((minVal - lastValue) / lastValue) * 100
+    const fmtPct = (p: number) => `${p >= 0 ? '+' : ''}${p.toFixed(1)}%`
+    return { maxVal, minVal, maxPct, minPct, fmtPct }
+  })() : null
+
   return (
     <div ref={containerRef} style={{ position: 'relative', height }}>
+      {sparklineStats && (
+        <>
+          <div
+            style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
+            className="text-[8px] leading-none opacity-60 text-emerald-400 px-0.5 pt-px"
+          >
+            {formatPrice(sparklineStats.maxVal, currency)}{' '}
+            <span className="opacity-80">{sparklineStats.fmtPct(sparklineStats.maxPct)}</span>
+          </div>
+          <div
+            style={{ position: 'absolute', bottom: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
+            className="text-[8px] leading-none opacity-60 text-red-400 px-0.5 pb-px"
+          >
+            {formatPrice(sparklineStats.minVal, currency)}{' '}
+            <span className="opacity-80">{sparklineStats.fmtPct(sparklineStats.minPct)}</span>
+          </div>
+        </>
+      )}
       {tooltip.visible && (
         <div
           style={{

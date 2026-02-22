@@ -25,6 +25,7 @@ const TIMEFRAME_CONFIG: Record<Timeframe, TimeframeConfig> = {
   '1M': { interval: '1d', rangeInDays: 30 },
   '3M': { interval: '1d', rangeInDays: 90 },
   '1Y': { interval: '1wk', rangeInDays: 365 },
+  '5Y': { interval: '1mo', rangeInDays: 1825 },
 }
 
 export async function validateSymbol(symbol: string): Promise<boolean> {

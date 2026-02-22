@@ -18,15 +18,16 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Quote } from '@/lib/types'
+import type { Quote, Timeframe } from '@/lib/types'
 import { StockCard } from './StockCard'
 
 interface StockGridProps {
   quotes: Quote[]
   watchlistId: number | null
+  globalTimeframe?: Timeframe
 }
 
-function SortableCard({ quote, isDraggingThis }: { quote: Quote; isDraggingThis: boolean }) {
+function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote; isDraggingThis: boolean; globalTimeframe?: Timeframe }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: quote.symbol,
   })
@@ -47,12 +48,12 @@ function SortableCard({ quote, isDraggingThis }: { quote: Quote; isDraggingThis:
         className="absolute top-0 left-0 right-0 h-10 z-10 touch-none cursor-grab active:cursor-grabbing select-none"
         aria-label="ドラッグして並べ替え"
       />
-      <StockCard quote={quote} />
+      <StockCard quote={quote} globalTimeframe={globalTimeframe} />
     </div>
   )
 }
 
-export function StockGrid({ quotes, watchlistId }: StockGridProps) {
+export function StockGrid({ quotes, watchlistId, globalTimeframe }: StockGridProps) {
   // Manage order separately from quote data.
   // This prevents server refreshes (new prices) from resetting the user-defined order.
   const [symbolOrder, setSymbolOrder] = useState<string[]>(() => quotes.map((q) => q.symbol))
@@ -132,6 +133,7 @@ export function StockGrid({ quotes, watchlistId }: StockGridProps) {
               key={quote.symbol}
               quote={quote}
               isDraggingThis={quote.symbol === activeSymbol}
+              globalTimeframe={globalTimeframe}
             />
           ))}
         </div>
@@ -140,7 +142,7 @@ export function StockGrid({ quotes, watchlistId }: StockGridProps) {
       <DragOverlay>
         {activeQuote && (
           <div className="rotate-2 shadow-2xl opacity-90 scale-105">
-            <StockCard quote={activeQuote} />
+            <StockCard quote={activeQuote} globalTimeframe={globalTimeframe} />
           </div>
         )}
       </DragOverlay>

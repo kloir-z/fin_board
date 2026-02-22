@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import type { Watchlist } from '@/lib/types'
+import type { Watchlist, Timeframe } from '@/lib/types'
+
+const ALL_TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '1Y', '5Y']
 
 interface RefreshIndicatorProps {
   lastUpdated: Date | null
@@ -14,6 +16,8 @@ interface RefreshIndicatorProps {
   onCreateWatchlist: (name: string) => Promise<void>
   onRenameWatchlist: (id: number, name: string) => Promise<void>
   onDeleteWatchlist: (id: number) => Promise<void>
+  globalTimeframe: Timeframe
+  onGlobalTimeframeChange: (tf: Timeframe) => void
 }
 
 export function RefreshIndicator({
@@ -27,6 +31,8 @@ export function RefreshIndicator({
   onCreateWatchlist,
   onRenameWatchlist,
   onDeleteWatchlist,
+  globalTimeframe,
+  onGlobalTimeframeChange,
 }: RefreshIndicatorProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [creating, setCreating] = useState(false)
@@ -34,7 +40,9 @@ export function RefreshIndicator({
   const [renamingId, setRenamingId] = useState<number | null>(null)
   const [renameValue, setRenameValue] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [tfDropdownOpen, setTfDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const tfDropdownRef = useRef<HTMLDivElement>(null)
 
   const activeWatchlist = watchlists.find((w) => w.id === activeWatchlistId)
 
@@ -42,7 +50,7 @@ export function RefreshIndicator({
     ? lastUpdated.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     : '--:--:--'
 
-  // Close dropdown on outside tap/click
+  // Close dropdowns on outside tap/click
   useEffect(() => {
     const handler = (e: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -50,6 +58,9 @@ export function RefreshIndicator({
         setCreating(false)
         setRenamingId(null)
         setConfirmDeleteId(null)
+      }
+      if (tfDropdownRef.current && !tfDropdownRef.current.contains(e.target as Node)) {
+        setTfDropdownOpen(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -247,6 +258,34 @@ export function RefreshIndicator({
       >
         +
       </button>
+
+      {/* Global timeframe dropdown */}
+      <div className="relative" ref={tfDropdownRef}>
+        <button
+          onClick={() => setTfDropdownOpen((o) => !o)}
+          className="flex items-center gap-0.5 text-[10px] font-medium text-white bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded touch-manipulation"
+        >
+          <span>{globalTimeframe}</span>
+          <span className="text-gray-400 text-[8px]">{tfDropdownOpen ? '▴' : '▾'}</span>
+        </button>
+        {tfDropdownOpen && (
+          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[56px]">
+            {ALL_TIMEFRAMES.map((tf) => (
+              <button
+                key={tf}
+                onClick={() => { onGlobalTimeframeChange(tf); setTfDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
+                  globalTimeframe === tf
+                    ? 'text-blue-400 font-semibold bg-gray-700'
+                    : 'text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Spacer */}
       <div className="flex-1" />
