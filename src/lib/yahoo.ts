@@ -20,7 +20,7 @@ interface TimeframeConfig {
 }
 
 const TIMEFRAME_CONFIG: Record<Timeframe, TimeframeConfig> = {
-  '1D': { interval: '5m', rangeInDays: 1 },
+  '1D': { interval: '5m', rangeInDays: 5 },  // 5日遡ることで週末でも直近取引日を取得
   '1W': { interval: '15m', rangeInDays: 7 },
   '1M': { interval: '1d', rangeInDays: 30 },
   '3M': { interval: '1d', rangeInDays: 90 },
@@ -78,12 +78,27 @@ export async function fetchChart(symbol: string, timeframe: Timeframe): Promise<
       interval: config.interval,
     })
 
-    return ((result.quotes ?? []) as Array<{ close: number | null; date: Date }>)
+    let points = ((result.quotes ?? []) as Array<{ close: number | null; date: Date }>)
       .filter((q) => q.close != null)
       .map((q) => ({
         time: Math.floor(new Date(q.date).getTime() / 1000),
         value: q.close as number,
       }))
+
+    // 1D: 直近取引日のデータのみに絞る（週末対応）
+    if (timeframe === '1D' && points.length > 0) {
+      const lastTs = points[points.length - 1].time
+      const lastDay = new Date(lastTs * 1000)
+      const lastY = lastDay.getUTCFullYear()
+      const lastM = lastDay.getUTCMonth()
+      const lastD = lastDay.getUTCDate()
+      points = points.filter((p) => {
+        const d = new Date(p.time * 1000)
+        return d.getUTCFullYear() === lastY && d.getUTCMonth() === lastM && d.getUTCDate() === lastD
+      })
+    }
+
+    return points
   } catch {
     return []
   }

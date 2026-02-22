@@ -165,6 +165,8 @@ describe('Sparkline', () => {
     const { container } = render(
       <Sparkline data={sampleData} isPositive={true} timeframe="1D" currency="USD" />
     )
+    // jsdom の clientWidth は 0 なのでクランプが正しく動くよう幅をモックする
+    Object.defineProperty(container.firstChild, 'clientWidth', { get: () => 300, configurable: true })
     const mockChart = createChart()
     const mockSeries = mockChart.addSeries()
     const handler = mockChart.subscribeCrosshairMove.mock.calls[0][0]

@@ -132,6 +132,26 @@ describe('fetchChart', () => {
     expect(points).toEqual([])
   })
 
+  it('filters 1D data to only the most recent trading day', async () => {
+    // 複数日の5分足データ（週末対応: 金曜+月曜を想定）
+    mockChart.mockResolvedValueOnce({
+      quotes: [
+        // Friday bars (UTC)
+        { date: new Date('2024-01-05T14:30:00Z'), close: 148.0 },
+        { date: new Date('2024-01-05T15:00:00Z'), close: 149.0 },
+        // Monday bars (UTC) — most recent trading day
+        { date: new Date('2024-01-08T14:30:00Z'), close: 150.0 },
+        { date: new Date('2024-01-08T15:00:00Z'), close: 151.0 },
+      ],
+    })
+
+    const points = await fetchChart('AAPL', '1D')
+    // 直近取引日(1/8)のみ返すこと
+    expect(points).toHaveLength(2)
+    expect(points[0].value).toBe(150.0)
+    expect(points[1].value).toBe(151.0)
+  })
+
   it('maps timeframes to correct yahoo parameters', async () => {
     mockChart.mockResolvedValue({ quotes: [] })
 

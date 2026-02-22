@@ -13,6 +13,16 @@ import {
 import type { ChartPoint, Timeframe } from '@/lib/types'
 import { formatPrice, formatChartDate } from '@/lib/formatters'
 
+// null = fitContent（1D イントラデイはデータ範囲に合わせる）
+const TIMEFRAME_RANGE_SECONDS: Record<Timeframe, number | null> = {
+  '1D': null,
+  '1W': 7 * 86400,
+  '1M': 30 * 86400,
+  '3M': 90 * 86400,
+  '1Y': 365 * 86400,
+  '5Y': 5 * 365 * 86400,
+}
+
 interface SparklineProps {
   data: ChartPoint[]
   isPositive: boolean
@@ -100,7 +110,14 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
 
     if (data.length > 0) {
       series.setData(data.map((p) => ({ time: p.time as UTCTimestamp, value: p.value })))
-      chart.timeScale().fitContent()
+      const rangeSeconds = TIMEFRAME_RANGE_SECONDS[timeframe]
+      if (rangeSeconds === null) {
+        chart.timeScale().fitContent()
+      } else {
+        const toTs = Math.floor(Date.now() / 1000) as UTCTimestamp
+        const fromTs = (toTs - rangeSeconds) as UTCTimestamp
+        chart.timeScale().setVisibleRange({ from: fromTs, to: toTs })
+      }
     }
 
     const handleCrosshairMove = (param: MouseEventParams) => {
@@ -133,7 +150,7 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
       chart.unsubscribeCrosshairMove(handleCrosshairMove)
       chart.remove()
     }
-  }, [data, isPositive, height, isVisible])
+  }, [data, isPositive, height, isVisible, timeframe])
 
   const sparklineStats = isVisible && data.length >= 2 ? (() => {
     const lastValue = data[data.length - 1].value
