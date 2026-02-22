@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   createChart,
   ColorType,
@@ -30,8 +30,18 @@ interface TooltipState {
 
 export function Sparkline({ data, isPositive, height = 60, timeframe, currency }: SparklineProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const tooltipRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, time: 0, value: 0 })
+  const [tooltipLeft, setTooltipLeft] = useState(0)
+
+  useLayoutEffect(() => {
+    if (!tooltip.visible || !tooltipRef.current || !containerRef.current) return
+    const tooltipWidth = tooltipRef.current.offsetWidth
+    const containerWidth = containerRef.current.clientWidth
+    const ideal = tooltip.x - tooltipWidth / 2
+    setTooltipLeft(Math.max(0, Math.min(ideal, containerWidth - tooltipWidth)))
+  }, [tooltip.visible, tooltip.x])
 
   // Lazy render: only create chart when card is visible in viewport
   useEffect(() => {
@@ -159,11 +169,11 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
       )}
       {tooltip.visible && (
         <div
+          ref={tooltipRef}
           style={{
             position: 'absolute',
             bottom: 'calc(100% + 4px)',
-            left: tooltip.x,
-            transform: 'translateX(-50%)',
+            left: tooltipLeft,
             pointerEvents: 'none',
             zIndex: 10,
             whiteSpace: 'nowrap',

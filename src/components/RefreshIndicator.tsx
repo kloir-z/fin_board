@@ -117,7 +117,7 @@ export function RefreshIndicator({
         </button>
 
         {dropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl min-w-[220px] z-50 py-1 overflow-hidden">
+          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl min-w-[220px] z-50 py-1 overflow-y-auto max-h-[70vh]">
             {watchlists.map((w) => (
               <div key={w.id}>
                 {renamingId === w.id ? (
