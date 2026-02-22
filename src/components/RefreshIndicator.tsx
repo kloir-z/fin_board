@@ -100,7 +100,7 @@ export function RefreshIndicator({
   }
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-700 sticky top-0 z-10">
+    <div className="flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-700 sticky top-0 z-20">
       {/* Watchlist dropdown */}
       <div className="relative" ref={dropdownRef}>
         <button

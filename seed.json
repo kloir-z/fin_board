@@ -1,16 +1,90 @@
 [
-  { "symbol": "AAPL", "name": "Apple Inc.", "market": "US" },
-  { "symbol": "GOOGL", "name": "Alphabet Inc.", "market": "US" },
-  { "symbol": "MSFT", "name": "Microsoft Corp.", "market": "US" },
-  { "symbol": "AMZN", "name": "Amazon.com Inc.", "market": "US" },
-  { "symbol": "NVDA", "name": "NVIDIA Corp.", "market": "US" },
-  { "symbol": "7203.T", "name": "Toyota Motor", "market": "JP" },
-  { "symbol": "6758.T", "name": "Sony Group", "market": "JP" },
-  { "symbol": "9984.T", "name": "SoftBank Group", "market": "JP" },
-  { "symbol": "6861.T", "name": "Keyence", "market": "JP" },
-  { "symbol": "8306.T", "name": "MUFG", "market": "JP" },
-  { "symbol": "^N225", "name": "日経平均", "market": "JP" },
-  { "symbol": "^DJI", "name": "Dow Jones", "market": "US" },
-  { "symbol": "^GSPC", "name": "S&P 500", "market": "US" },
-  { "symbol": "USDJPY=X", "name": "USD/JPY", "market": "JP" }
+  {
+    "name": "マーケット概況",
+    "tickers": [
+      { "symbol": "^GSPC",    "name": "S&P 500",           "market": "US" },
+      { "symbol": "^IXIC",    "name": "NASDAQ Composite",   "market": "US" },
+      { "symbol": "^DJI",     "name": "Dow Jones",          "market": "US" },
+      { "symbol": "^VIX",     "name": "恐怖指数 (VIX)",     "market": "US" },
+      { "symbol": "^N225",    "name": "日経平均",            "market": "JP" },
+      { "symbol": "USDJPY=X", "name": "USD/JPY",            "market": "JP" },
+      { "symbol": "EURUSD=X", "name": "EUR/USD",            "market": "US" },
+      { "symbol": "GC=F",     "name": "金先物",             "market": "US" },
+      { "symbol": "CL=F",     "name": "WTI原油",            "market": "US" },
+      { "symbol": "BTC-USD",  "name": "ビットコイン",        "market": "US" }
+    ]
+  },
+  {
+    "name": "テック大型株",
+    "tickers": [
+      { "symbol": "AAPL",  "name": "Apple Inc.",        "market": "US" },
+      { "symbol": "MSFT",  "name": "Microsoft Corp.",   "market": "US" },
+      { "symbol": "GOOGL", "name": "Alphabet Inc.",     "market": "US" },
+      { "symbol": "AMZN",  "name": "Amazon.com Inc.",   "market": "US" },
+      { "symbol": "META",  "name": "Meta Platforms",    "market": "US" },
+      { "symbol": "NVDA",  "name": "NVIDIA Corp.",      "market": "US" },
+      { "symbol": "TSLA",  "name": "Tesla Inc.",        "market": "US" },
+      { "symbol": "ORCL",  "name": "Oracle Corp.",      "market": "US" },
+      { "symbol": "ADBE",  "name": "Adobe Inc.",        "market": "US" },
+      { "symbol": "CRM",   "name": "Salesforce Inc.",   "market": "US" }
+    ]
+  },
+  {
+    "name": "AI・半導体",
+    "tickers": [
+      { "symbol": "AMD",   "name": "Advanced Micro Devices", "market": "US" },
+      { "symbol": "INTC",  "name": "Intel Corp.",            "market": "US" },
+      { "symbol": "ARM",   "name": "ARM Holdings",           "market": "US" },
+      { "symbol": "AVGO",  "name": "Broadcom Inc.",          "market": "US" },
+      { "symbol": "MRVL",  "name": "Marvell Technology",     "market": "US" },
+      { "symbol": "ALAB",  "name": "Astera Labs",            "market": "US" },
+      { "symbol": "SMCI",  "name": "Super Micro Computer",   "market": "US" },
+      { "symbol": "PLTR",  "name": "Palantir Technologies",  "market": "US" },
+      { "symbol": "AI",    "name": "C3.ai Inc.",             "market": "US" },
+      { "symbol": "PATH",  "name": "UiPath Inc.",            "market": "US" }
+    ]
+  },
+  {
+    "name": "ロボティクス",
+    "tickers": [
+      { "symbol": "ISRG",   "name": "Intuitive Surgical",  "market": "US" },
+      { "symbol": "TER",    "name": "Teradyne Inc.",        "market": "US" },
+      { "symbol": "CGNX",   "name": "Cognex Corp.",         "market": "US" },
+      { "symbol": "ROK",    "name": "Rockwell Automation",  "market": "US" },
+      { "symbol": "LAZR",   "name": "Luminar Technologies", "market": "US" },
+      { "symbol": "NVDA",   "name": "NVIDIA Corp.",         "market": "US" },
+      { "symbol": "6954.T", "name": "FANUC Corp.",          "market": "JP" },
+      { "symbol": "6506.T", "name": "安川電機",             "market": "JP" },
+      { "symbol": "6645.T", "name": "オムロン",             "market": "JP" },
+      { "symbol": "7267.T", "name": "本田技研工業",          "market": "JP" }
+    ]
+  },
+  {
+    "name": "量子コンピューティング",
+    "tickers": [
+      { "symbol": "IONQ",  "name": "IonQ Inc.",        "market": "US" },
+      { "symbol": "RGTI",  "name": "Rigetti Computing", "market": "US" },
+      { "symbol": "QBTS",  "name": "D-Wave Quantum",    "market": "US" },
+      { "symbol": "QUBT",  "name": "Quantum Computing", "market": "US" },
+      { "symbol": "IBM",   "name": "IBM Corp.",         "market": "US" },
+      { "symbol": "GOOGL", "name": "Alphabet Inc.",     "market": "US" },
+      { "symbol": "MSFT",  "name": "Microsoft Corp.",   "market": "US" },
+      { "symbol": "INTC",  "name": "Intel Corp.",       "market": "US" }
+    ]
+  },
+  {
+    "name": "隠れた注目株",
+    "tickers": [
+      { "symbol": "ASML",   "name": "ASML Holding",        "market": "US" },
+      { "symbol": "KLAC",   "name": "KLA Corp.",            "market": "US" },
+      { "symbol": "ENTG",   "name": "Entegris Inc.",        "market": "US" },
+      { "symbol": "WOLF",   "name": "Wolfspeed Inc.",       "market": "US" },
+      { "symbol": "IPGP",   "name": "IPG Photonics",        "market": "US" },
+      { "symbol": "SITM",   "name": "SiTime Corp.",         "market": "US" },
+      { "symbol": "ALGM",   "name": "Allegro MicroSystems", "market": "US" },
+      { "symbol": "8035.T", "name": "東京エレクトロン",      "market": "JP" },
+      { "symbol": "6857.T", "name": "アドバンテスト",        "market": "JP" },
+      { "symbol": "6920.T", "name": "レーザーテック",        "market": "JP" }
+    ]
+  }
 ]

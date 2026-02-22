@@ -130,9 +130,9 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
     const values = data.map((d) => d.value)
     const maxVal = Math.max(...values)
     const minVal = Math.min(...values)
-    // % relative to current (last) price — how far were the period high/low from now
-    const maxPct = ((maxVal - lastValue) / lastValue) * 100
-    const minPct = ((minVal - lastValue) / lastValue) * 100
+    // % relative to the high/low itself — how far current is from the period high/low
+    const maxPct = ((lastValue - maxVal) / maxVal) * 100  // negative: current is below high
+    const minPct = ((lastValue - minVal) / minVal) * 100  // positive: current is above low
     const fmtPct = (p: number) => `${p >= 0 ? '+' : ''}${p.toFixed(1)}%`
     return { maxVal, minVal, maxPct, minPct, fmtPct }
   })() : null
@@ -143,17 +143,17 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
         <>
           <div
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
-            className="text-[8px] leading-none opacity-60 text-emerald-400 px-0.5 pt-px"
+            className="text-[9px] leading-none text-emerald-300 bg-gray-950/75 rounded px-1 pt-px"
           >
             {formatPrice(sparklineStats.maxVal, currency)}{' '}
-            <span className="opacity-80">{sparklineStats.fmtPct(sparklineStats.maxPct)}</span>
+            <span>{sparklineStats.fmtPct(sparklineStats.maxPct)}</span>
           </div>
           <div
             style={{ position: 'absolute', bottom: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
-            className="text-[8px] leading-none opacity-60 text-red-400 px-0.5 pb-px"
+            className="text-[9px] leading-none text-red-300 bg-gray-950/75 rounded px-1 pb-px"
           >
             {formatPrice(sparklineStats.minVal, currency)}{' '}
-            <span className="opacity-80">{sparklineStats.fmtPct(sparklineStats.minPct)}</span>
+            <span>{sparklineStats.fmtPct(sparklineStats.minPct)}</span>
           </div>
         </>
       )}

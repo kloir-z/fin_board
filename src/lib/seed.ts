@@ -10,26 +10,47 @@ interface SeedEntry {
   market: 'US' | 'JP'
 }
 
+interface SeedWatchlist {
+  name: string
+  tickers: SeedEntry[]
+}
+
 export function runSeedIfEmpty(): void {
   const db = getDb()
   const watchlistRepo = createWatchlistRepository(db)
+  const tickerRepo = createTickerRepository(db)
+
   const watchlists = watchlistRepo.findAll()
   if (watchlists.length === 0) return
 
-  const defaultWatchlist = watchlists[0]
-  const tickerRepo = createTickerRepository(db)
-  const existing = tickerRepo.findAll(defaultWatchlist.id)
+  // Already seeded if the first watchlist has tickers
+  const existing = tickerRepo.findAll(watchlists[0].id)
   if (existing.length > 0) return
 
   const seedPath = path.join(process.cwd(), 'seed.json')
   if (!fs.existsSync(seedPath)) return
 
-  const entries: SeedEntry[] = JSON.parse(fs.readFileSync(seedPath, 'utf-8'))
-  for (const entry of entries) {
-    try {
-      tickerRepo.create(entry.symbol, entry.name, entry.market, defaultWatchlist.id)
-    } catch {
-      // skip duplicates silently
+  const raw = JSON.parse(fs.readFileSync(seedPath, 'utf-8'))
+
+  // Support both formats: new multi-watchlist [{name, tickers}] and legacy flat array
+  const seedWatchlists: SeedWatchlist[] =
+    Array.isArray(raw) && raw.length > 0 && 'tickers' in raw[0]
+      ? (raw as SeedWatchlist[])
+      : [{ name: 'Default', tickers: raw as SeedEntry[] }]
+
+  for (let i = 0; i < seedWatchlists.length; i++) {
+    const seedWl = seedWatchlists[i]
+    const watchlist =
+      i === 0 && watchlists.length > 0
+        ? watchlistRepo.rename(watchlists[0].id, seedWl.name)
+        : watchlistRepo.create(seedWl.name)
+
+    for (const entry of seedWl.tickers) {
+      try {
+        tickerRepo.create(entry.symbol, entry.name, entry.market, watchlist.id)
+      } catch {
+        // skip duplicates silently
+      }
     }
   }
 }
