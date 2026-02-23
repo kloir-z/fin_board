@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { StockCard } from '@/components/StockCard'
 import type { Quote } from '@/lib/types'
 
@@ -57,39 +57,29 @@ describe('StockCard', () => {
     expect(screen.getByText('¥3,100')).toBeInTheDocument()
   })
 
-  it('shows positive change percent in green', () => {
-    render(<StockCard quote={positiveQuote} />)
-    const changeEl = screen.getByText(/\+1\.40%/)
-    expect(changeEl).toHaveClass('text-emerald-400')
-  })
-
-  it('shows negative change percent in red', () => {
-    render(<StockCard quote={negativeQuote} />)
-    const changeEl = screen.getByText(/-3\.13%/)
-    expect(changeEl).toHaveClass('text-red-400')
-  })
-
   it('renders sparkline', () => {
     render(<StockCard quote={positiveQuote} />)
     expect(screen.getByTestId('sparkline')).toBeInTheDocument()
   })
 
-  it('renders timeframe selector', () => {
+  it('does not render timeframe selector buttons', () => {
     render(<StockCard quote={positiveQuote} />)
-    expect(screen.getByText('1D')).toBeInTheDocument()
-    expect(screen.getByText('1Y')).toBeInTheDocument()
+    expect(screen.queryByText('1D')).not.toBeInTheDocument()
+    expect(screen.queryByText('1W')).not.toBeInTheDocument()
+    expect(screen.queryByText('1Y')).not.toBeInTheDocument()
   })
 
-  it('changes timeframe when selector is clicked', () => {
-    render(<StockCard quote={positiveQuote} />)
-    fireEvent.click(screen.getByText('1M'))
-    expect(screen.getByText('1M').closest('button')).toHaveAttribute('aria-pressed', 'true')
-  })
-
-  it('passes timeframe prop to Sparkline', () => {
+  it('passes default timeframe 1D to Sparkline', () => {
     render(<StockCard quote={positiveQuote} />)
     expect(MockSparkline).toHaveBeenCalledWith(
       expect.objectContaining({ timeframe: '1D' })
+    )
+  })
+
+  it('passes globalTimeframe prop to Sparkline', () => {
+    render(<StockCard quote={positiveQuote} globalTimeframe="1M" />)
+    expect(MockSparkline).toHaveBeenCalledWith(
+      expect.objectContaining({ timeframe: '1M' })
     )
   })
 
@@ -97,14 +87,6 @@ describe('StockCard', () => {
     render(<StockCard quote={positiveQuote} />)
     expect(MockSparkline).toHaveBeenCalledWith(
       expect.objectContaining({ currency: 'USD' })
-    )
-  })
-
-  it('passes updated timeframe to Sparkline after change', () => {
-    render(<StockCard quote={positiveQuote} />)
-    fireEvent.click(screen.getByText('1W'))
-    expect(MockSparkline).toHaveBeenLastCalledWith(
-      expect.objectContaining({ timeframe: '1W' })
     )
   })
 

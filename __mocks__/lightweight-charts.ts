@@ -6,7 +6,7 @@ const mockSeries = {
 const mockChart = {
   addSeries: jest.fn().mockReturnValue(mockSeries),
   applyOptions: jest.fn(),
-  timeScale: jest.fn().mockReturnValue({ fitContent: jest.fn(), setVisibleRange: jest.fn(), borderVisible: false }),
+  timeScale: jest.fn().mockReturnValue({ fitContent: jest.fn(), setVisibleRange: jest.fn(), timeToCoordinate: jest.fn().mockReturnValue(null), borderVisible: false }),
   remove: jest.fn(),
   resize: jest.fn(),
   subscribeClick: jest.fn(),

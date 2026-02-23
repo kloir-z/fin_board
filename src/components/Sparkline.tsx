@@ -20,7 +20,88 @@ const TIMEFRAME_RANGE_SECONDS: Record<Timeframe, number | null> = {
   '1M': 30 * 86400,
   '3M': 90 * 86400,
   '1Y': 365 * 86400,
+  '2Y': 2 * 365 * 86400,
+  '3Y': 3 * 365 * 86400,
   '5Y': 5 * 365 * 86400,
+}
+
+// データ配列の中で ts に最も近いタイムスタンプを返す（二分探索）
+// timeToCoordinate はデータに存在しない時刻に対して null を返すため、
+// カレンダー境界をデータ点にスナップしてから渡す必要がある
+function snapToNearestDataTimestamp(ts: number, data: ChartPoint[]): number {
+  let lo = 0, hi = data.length - 1
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (data[mid].time < ts) lo = mid + 1
+    else hi = mid
+  }
+  if (lo === 0) return data[0].time
+  if (lo >= data.length) return data[data.length - 1].time
+  const before = data[lo - 1].time
+  const after = data[lo].time
+  return (ts - before) <= (after - ts) ? before : after
+}
+
+// タイムフレーム別カレンダー境界（UTC）を返す
+// 1D/1W は縦線なしのため空配列
+function getCalendarBoundaries(tf: Timeframe, startTs: number, endTs: number): number[] {
+  if (tf === '1D' || tf === '1W') return []
+
+  const result: number[] = []
+  const s = new Date(startTs * 1000)
+  const endMs = endTs * 1000
+
+  if (tf === '1M') {
+    // 週次: 月曜日ごと
+    const d = new Date(Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate()))
+    while (d.getUTCDay() !== 1) d.setUTCDate(d.getUTCDate() + 1)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCDate(d.getUTCDate() + 7)
+    }
+  } else if (tf === '3M') {
+    // 月次: 毎月1日
+    const d = new Date(Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), 1))
+    while (d.getTime() / 1000 < startTs) d.setUTCMonth(d.getUTCMonth() + 1)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCMonth(d.getUTCMonth() + 1)
+    }
+  } else if (tf === '1Y') {
+    // 四半期: 1/1, 4/1, 7/1, 10/1
+    const d = new Date(Date.UTC(s.getUTCFullYear(), Math.floor(s.getUTCMonth() / 3) * 3, 1))
+    while (d.getTime() / 1000 < startTs) d.setUTCMonth(d.getUTCMonth() + 3)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCMonth(d.getUTCMonth() + 3)
+    }
+  } else if (tf === '2Y') {
+    // 半年: 1/1, 7/1
+    const d = new Date(Date.UTC(s.getUTCFullYear(), Math.floor(s.getUTCMonth() / 6) * 6, 1))
+    while (d.getTime() / 1000 < startTs) d.setUTCMonth(d.getUTCMonth() + 6)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCMonth(d.getUTCMonth() + 6)
+    }
+  } else if (tf === '3Y') {
+    // 年次: 毎年1/1
+    const d = new Date(Date.UTC(s.getUTCFullYear(), 0, 1))
+    while (d.getTime() / 1000 < startTs) d.setUTCFullYear(d.getUTCFullYear() + 1)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCFullYear(d.getUTCFullYear() + 1)
+    }
+  } else if (tf === '5Y') {
+    // 年次: 毎年1/1
+    const d = new Date(Date.UTC(s.getUTCFullYear(), 0, 1))
+    while (d.getTime() / 1000 < startTs) d.setUTCFullYear(d.getUTCFullYear() + 1)
+    while (d.getTime() <= endMs) {
+      result.push(d.getTime() / 1000)
+      d.setUTCFullYear(d.getUTCFullYear() + 1)
+    }
+  }
+
+  return result
 }
 
 interface SparklineProps {
@@ -41,6 +122,7 @@ interface TooltipState {
 export function Sparkline({ data, isPositive, height = 60, timeframe, currency }: SparklineProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
+  const gridCanvasRef = useRef<HTMLCanvasElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, time: 0, value: 0 })
   const [tooltipLeft, setTooltipLeft] = useState(0)
@@ -120,6 +202,40 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
       }
     }
 
+    // カレンダー整列の縦グリッド線を canvas に描画
+    // setVisibleRange 後に timeToCoordinate が使えるよう setTimeout で遅延
+    const drawGrid = () => {
+      const canvas = gridCanvasRef.current
+      if (!canvas || data.length === 0) return
+      const w = container.clientWidth
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      canvas.width = w
+      canvas.height = height
+      ctx.clearRect(0, 0, w, height)
+
+      const boundaries = getCalendarBoundaries(timeframe, data[0].time, data[data.length - 1].time)
+      if (boundaries.length === 0) return
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
+      ctx.lineWidth = 1
+      for (const ts of boundaries) {
+        // データに存在するタイムスタンプにスナップしてから変換する
+        const snapped = snapToNearestDataTimestamp(ts, data)
+        const x = chart.timeScale().timeToCoordinate(snapped as UTCTimestamp)
+        if (x === null || x < 0 || x > w) continue
+        const px = Math.round(x) + 0.5
+        ctx.beginPath()
+        ctx.moveTo(px, 0)
+        ctx.lineTo(px, height)
+        ctx.stroke()
+      }
+    }
+
+    // chart の座標系が確定した後（最初のフレーム描画後）にグリッドを描く
+    const animId = requestAnimationFrame(drawGrid)
+
     const handleCrosshairMove = (param: MouseEventParams) => {
       if (!param.time || !param.point) {
         setTooltip((prev) => ({ ...prev, visible: false }))
@@ -142,48 +258,32 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
 
     const resizeObserver = new ResizeObserver(() => {
       chart.resize(container.clientWidth, height)
+      drawGrid()
     })
     resizeObserver.observe(container)
 
     return () => {
+      cancelAnimationFrame(animId)
       resizeObserver.disconnect()
       chart.unsubscribeCrosshairMove(handleCrosshairMove)
       chart.remove()
     }
   }, [data, isPositive, height, isVisible, timeframe])
 
-  const sparklineStats = isVisible && data.length >= 2 ? (() => {
-    const lastValue = data[data.length - 1].value
-    const values = data.map((d) => d.value)
-    const maxVal = Math.max(...values)
-    const minVal = Math.min(...values)
-    // % relative to the high/low itself — how far current is from the period high/low
-    const maxPct = ((lastValue - maxVal) / maxVal) * 100  // negative: current is below high
-    const minPct = ((lastValue - minVal) / minVal) * 100  // positive: current is above low
-    const fmtPct = (p: number) => `${p >= 0 ? '+' : ''}${p.toFixed(1)}%`
-    return { maxVal, minVal, maxPct, minPct, fmtPct }
-  })() : null
-
   return (
     <div ref={containerRef} style={{ position: 'relative', height }}>
-      {sparklineStats && (
-        <>
-          <div
-            style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
-            className="text-[9px] leading-none text-emerald-300 bg-gray-950/75 rounded px-1 pt-px"
-          >
-            {formatPrice(sparklineStats.maxVal, currency)}{' '}
-            <span>{sparklineStats.fmtPct(sparklineStats.maxPct)}</span>
-          </div>
-          <div
-            style={{ position: 'absolute', bottom: 0, left: 0, pointerEvents: 'none', zIndex: 5 }}
-            className="text-[9px] leading-none text-red-300 bg-gray-950/75 rounded px-1 pb-px"
-          >
-            {formatPrice(sparklineStats.minVal, currency)}{' '}
-            <span>{sparklineStats.fmtPct(sparklineStats.minPct)}</span>
-          </div>
-        </>
-      )}
+      <canvas
+        ref={gridCanvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          pointerEvents: 'none',
+          zIndex: 2,
+        }}
+        width={0}
+        height={0}
+      />
       {tooltip.visible && (
         <div
           ref={tooltipRef}

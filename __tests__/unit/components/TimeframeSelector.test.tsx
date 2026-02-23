@@ -6,13 +6,16 @@ describe('TimeframeSelector', () => {
 
   beforeEach(() => onChange.mockClear())
 
-  it('renders all 5 timeframe buttons', () => {
+  it('renders all 8 timeframe buttons', () => {
     render(<TimeframeSelector active="1D" onChange={onChange} />)
     expect(screen.getByText('1D')).toBeInTheDocument()
     expect(screen.getByText('1W')).toBeInTheDocument()
     expect(screen.getByText('1M')).toBeInTheDocument()
     expect(screen.getByText('3M')).toBeInTheDocument()
     expect(screen.getByText('1Y')).toBeInTheDocument()
+    expect(screen.getByText('2Y')).toBeInTheDocument()
+    expect(screen.getByText('3Y')).toBeInTheDocument()
+    expect(screen.getByText('5Y')).toBeInTheDocument()
   })
 
   it('marks the active timeframe with aria-pressed=true', () => {

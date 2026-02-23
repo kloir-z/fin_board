@@ -69,7 +69,7 @@ describe('Chart API logic (integration)', () => {
     mockFetchChart.mockResolvedValue(samplePoints)
     const orchestrator = createCacheOrchestrator(db)
 
-    const timeframes = ['1D', '1W', '1M', '3M', '1Y'] as const
+    const timeframes = ['1D', '1W', '1M', '3M', '1Y', '2Y', '3Y', '5Y'] as const
     for (const tf of timeframes) {
       mockFetchChart.mockResolvedValueOnce(samplePoints)
       const points = await orchestrator.getCachedChart('AAPL', tf)

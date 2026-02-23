@@ -31,7 +31,7 @@ export interface ChartPoint {
   value: number
 }
 
-export type Timeframe = '1D' | '1W' | '1M' | '3M' | '1Y' | '5Y'
+export type Timeframe = '1D' | '1W' | '1M' | '3M' | '1Y' | '2Y' | '3Y' | '5Y'
 
 export interface ApiResponse<T> {
   success: boolean
