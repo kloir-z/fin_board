@@ -132,24 +132,45 @@ describe('fetchChart', () => {
     expect(points).toEqual([])
   })
 
-  it('filters 1D data to only the most recent trading day', async () => {
-    // 複数日の5分足データ（週末対応: 金曜+月曜を想定）
+  it('filters 1D data to the last trading session using gap detection', async () => {
+    // 週末ギャップ: 金曜→月曜 (~67時間) でセッション区切りを検出
+    // セッション内バー間隔は1時間 (< 2時間閾値) にして同一セッションとして扱われることを確認
     mockChart.mockResolvedValueOnce({
       quotes: [
-        // Friday bars (UTC)
-        { date: new Date('2024-01-05T14:30:00Z'), close: 148.0 },
-        { date: new Date('2024-01-05T15:00:00Z'), close: 149.0 },
-        // Monday bars (UTC) — most recent trading day
-        { date: new Date('2024-01-08T14:30:00Z'), close: 150.0 },
-        { date: new Date('2024-01-08T15:00:00Z'), close: 151.0 },
+        { date: new Date('2024-01-05T14:00:00Z'), close: 148.0 }, // Fri 9AM EST
+        { date: new Date('2024-01-05T15:00:00Z'), close: 149.0 }, // Fri 10AM EST (1h gap)
+        // ~67時間の週末ギャップ
+        { date: new Date('2024-01-08T14:00:00Z'), close: 150.0 }, // Mon 9AM EST
+        { date: new Date('2024-01-08T15:00:00Z'), close: 151.0 }, // Mon 10AM EST (1h gap)
       ],
     })
 
     const points = await fetchChart('AAPL', '1D')
-    // 直近取引日(1/8)のみ返すこと
+    // 週末の大きなギャップで区切り、月曜セッションのみ返すこと
     expect(points).toHaveLength(2)
     expect(points[0].value).toBe(150.0)
     expect(points[1].value).toBe(151.0)
+  })
+
+  it('returns full session when after-hours crosses UTC midnight (VYM pattern)', async () => {
+    // VYM/ETF: アフターアワーズが8PM EST(=UTC翌日01:00)まで続くケース
+    // セッション内バーを1時間間隔にして連続性を保証する
+    mockChart.mockResolvedValueOnce({
+      quotes: [
+        { date: new Date('2024-01-04T21:00:00Z'), close: 145.0 }, // Thu 4PM EST
+        // 25時間ギャップ (Thu 21:00 → Fri 22:00) → セッション区切り
+        { date: new Date('2024-01-05T22:00:00Z'), close: 147.0 }, // Fri 5PM EST after-hours
+        { date: new Date('2024-01-05T23:00:00Z'), close: 148.0 }, // 1h later
+        { date: new Date('2024-01-06T00:00:00Z'), close: 149.0 }, // 1h later (UTC midnight!)
+        { date: new Date('2024-01-06T01:00:00Z'), close: 149.5 }, // 1h later (Fri 8PM EST AH end)
+      ],
+    })
+
+    const points = await fetchChart('VYM', '1D')
+    // 木→金の25時間ギャップで区切り、金曜アフターアワーズ全体(UTC深夜越え含む)を返すこと
+    expect(points).toHaveLength(4)
+    expect(points[0].value).toBe(147.0) // セッション先頭
+    expect(points[3].value).toBe(149.5) // アフターアワーズ終端(UTC翌日)
   })
 
   it('maps timeframes to correct yahoo parameters', async () => {

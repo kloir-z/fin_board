@@ -85,17 +85,18 @@ export async function fetchChart(symbol: string, timeframe: Timeframe): Promise<
         value: q.close as number,
       }))
 
-    // 1D: 直近取引日のデータのみに絞る（週末対応）
+    // 1D: 末尾から2時間超の空白を見つけて直近取引セッションのみ抽出
+    // UTC日付で区切ると US アフターアワーズが深夜をまたぐ銘柄(VYM等)で欠損するため
     if (timeframe === '1D' && points.length > 0) {
-      const lastTs = points[points.length - 1].time
-      const lastDay = new Date(lastTs * 1000)
-      const lastY = lastDay.getUTCFullYear()
-      const lastM = lastDay.getUTCMonth()
-      const lastD = lastDay.getUTCDate()
-      points = points.filter((p) => {
-        const d = new Date(p.time * 1000)
-        return d.getUTCFullYear() === lastY && d.getUTCMonth() === lastM && d.getUTCDate() === lastD
-      })
+      const SESSION_GAP_SECONDS = 2 * 60 * 60 // 2時間超 = セッション区切り
+      let sessionStart = 0
+      for (let i = points.length - 1; i > 0; i--) {
+        if (points[i].time - points[i - 1].time > SESSION_GAP_SECONDS) {
+          sessionStart = i
+          break
+        }
+      }
+      points = points.slice(sessionStart)
     }
 
     return points
