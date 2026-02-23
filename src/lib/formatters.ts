@@ -1,5 +1,12 @@
 import type { Timeframe } from '@/lib/types'
 
+export function getTickerUrl(symbol: string, name: string): string {
+  if (symbol.endsWith('.T') || symbol.startsWith('^N')) {
+    return `https://finance.yahoo.co.jp/quote/${symbol}`
+  }
+  return `https://www.google.com/search?q=${encodeURIComponent(`${symbol} ${name} チャート`)}`
+}
+
 export function formatPrice(price: number, currency: string): string {
   if (currency === 'JPY') {
     return `¥${Math.round(price).toLocaleString('ja-JP')}`

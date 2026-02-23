@@ -5,7 +5,7 @@ import type { Quote, Timeframe } from '@/lib/types'
 import { TimeframeSelector } from './TimeframeSelector'
 import { Sparkline } from './Sparkline'
 import { useChartData } from '@/hooks/useChartData'
-import { formatPrice } from '@/lib/formatters'
+import { formatPrice, getTickerUrl } from '@/lib/formatters'
 
 interface StockCardProps {
   quote: Quote
@@ -39,7 +39,7 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
       </div>
       <div className="flex items-center justify-between gap-1">
         <a
-          href={`https://finance.yahoo.co.jp/quote/${quote.symbol}`}
+          href={getTickerUrl(quote.symbol, quote.name)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[10px] text-gray-500 shrink-0 relative z-20 hover:text-gray-300 hover:underline"
