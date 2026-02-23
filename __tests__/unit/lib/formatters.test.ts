@@ -23,33 +23,19 @@ describe('formatPrice', () => {
 })
 
 describe('formatChartDate', () => {
-  // Use a timestamp well in the middle of the day (UTC noon) so date is stable across most timezones
-  const noonUtc = 1699963200 // 2023-11-14T12:00:00Z
+  const dateTimePattern = /^\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}$/
 
-  it('formats 1D timeframe as HH:MM time', () => {
-    expect(formatChartDate(noonUtc, '1D')).toMatch(/^\d{2}:\d{2}$/)
+  it('formats all timeframes as YY/MM/DD HH:MM', () => {
+    const timestamp = 1699963200 // 2023-11-14T12:00:00Z
+    for (const tf of ['1D', '1W', '1M', '3M', '1Y', '5Y'] as const) {
+      expect(formatChartDate(timestamp, tf)).toMatch(dateTimePattern)
+    }
   })
 
-  it('formats 1W timeframe as YYYY/MM/DD date', () => {
-    expect(formatChartDate(noonUtc, '1W')).toMatch(/^\d{4}\/\d{2}\/\d{2}$/)
-  })
-
-  it('formats 1M timeframe as YYYY/MM/DD date', () => {
-    expect(formatChartDate(noonUtc, '1M')).toMatch(/^\d{4}\/\d{2}\/\d{2}$/)
-  })
-
-  it('formats 3M timeframe as YYYY/MM/DD date', () => {
-    expect(formatChartDate(noonUtc, '3M')).toMatch(/^\d{4}\/\d{2}\/\d{2}$/)
-  })
-
-  it('formats 1Y timeframe as YYYY/MM/DD date', () => {
-    expect(formatChartDate(noonUtc, '1Y')).toMatch(/^\d{4}\/\d{2}\/\d{2}$/)
-  })
-
-  it('date format has correct zero-padded month and day', () => {
-    // 2023-01-05T12:00:00Z — month=1, day=5, should pad to 01 and 05
-    const timestamp = 1672920000 // 2023-01-05T12:00:00Z
-    const result = formatChartDate(timestamp, '1M')
-    expect(result).toMatch(/^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/)
+  it('zero-pads month, day, hours and minutes', () => {
+    // 2023-01-05T04:05:00Z — month=1, day=5, hour=4, min=5 (local may vary but pattern holds)
+    const timestamp = 1672891500 // 2023-01-05T04:05:00Z
+    const result = formatChartDate(timestamp, '1D')
+    expect(result).toMatch(dateTimePattern)
   })
 })
