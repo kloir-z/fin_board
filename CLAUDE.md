@@ -106,8 +106,8 @@ The DB file lives at `data/fin_board.db` (gitignored). Schema is applied idempot
 ### Stock Symbol Conventions
 
 - Japanese stocks use Yahoo Finance suffix: `7203.T`, `6758.T` etc.
-- `market` field on `Ticker` is `'JP'` or `'US'` — used for display only, not for routing
-- Prices: USD stocks display with `$` and 2 decimals; JPY stocks with `¥` and 0 decimals (rounded)
+- `market` field on `Ticker` is `'US' | 'JP' | 'MY' | 'TH' | 'VN'` — used for display only, not for routing
+- Prices: USD `$` 2 decimals; JPY/VND `¥`/`₫` 0 decimals (rounded); MYR `RM` 2 decimals; THB `฿` 2 decimals
 
 ## Watchlist & Ticker Operations
 
@@ -115,17 +115,18 @@ When the user mentions adding/removing stocks or watchlists, follow these proced
 
 ### Symbol format
 
-| Type | Format | Examples |
-|------|--------|---------|
-| US stocks | Uppercase | `AAPL`, `NVDA`, `TSLA`, `MSFT` |
-| JP stocks | Code + `.T` | `7203.T` (Toyota), `6758.T` (Sony) |
-| US indices | `^` prefix | `^GSPC`, `^IXIC`, `^DJI`, `^VIX` |
-| JP indices | `^` prefix | `^N225` |
-| FX | `PAIR=X` | `USDJPY=X`, `EURUSD=X`, `EURJPY=X` |
-| Futures | `SYM=F` | `GC=F` (Gold), `CL=F` (WTI) |
-| Crypto | `SYM-USD` | `BTC-USD`, `ETH-USD` |
-
-`market` field: `"JP"` for `.T`-suffix symbols, `"US"` for everything else.
+| Type | Format | Examples | market |
+|------|--------|---------|--------|
+| US stocks | Uppercase | `AAPL`, `NVDA`, `TSLA`, `MSFT` | `US` |
+| JP stocks | Code + `.T` | `7203.T` (Toyota), `6758.T` (Sony) | `JP` |
+| MY stocks | Code + `.KL` | `1155.KL` (Maybank), `1818.KL` (KLK) | `MY` |
+| TH stocks | Code + `.BK` | `PTT.BK` (PTT), `SCB.BK` (SCB) | `TH` |
+| VN stocks | Code + `.VN` | `VNM.VN` (Vinamilk), `VIC.VN` (Vingroup) | `VN` |
+| US indices | `^` prefix | `^GSPC`, `^IXIC`, `^DJI`, `^VIX` | `US` |
+| JP indices | `^` prefix | `^N225` | `JP` |
+| FX | `PAIR=X` | `USDJPY=X`, `EURUSD=X`, `EURJPY=X` | `US` |
+| Futures | `SYM=F` | `GC=F` (Gold), `CL=F` (WTI) | `US` |
+| Crypto | `SYM-USD` | `BTC-USD`, `ETH-USD` | `US` |
 
 ### Add a ticker
 

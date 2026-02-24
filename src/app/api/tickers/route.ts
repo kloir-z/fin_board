@@ -25,7 +25,7 @@ const createSchema = z.object({
     .max(20)
     .regex(/^[A-Z0-9.^=]+$/, 'Symbol must contain uppercase letters, digits, dots, ^ or ='),
   name: z.string().min(1).max(100),
-  market: z.enum(['US', 'JP']),
+  market: z.enum(['US', 'JP', 'MY', 'TH', 'VN']),
   watchlistId: z.number().int().positive(),
 })
 

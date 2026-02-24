@@ -21,6 +21,30 @@ export function getDb(): ReturnType<typeof Database> {
   db.pragma('journal_mode = WAL')
   db.pragma('foreign_keys = ON')
 
+  // Migration: expand market CHECK constraint to include ASEAN markets (MY, TH, VN)
+  const tickerSchemaSql = (
+    db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='tickers'").get() as
+      | { sql: string }
+      | undefined
+  )?.sql ?? ''
+  if (!tickerSchemaSql.includes("'MY'")) {
+    db.pragma('foreign_keys = OFF')
+    db.exec('ALTER TABLE tickers RENAME TO tickers_v1')
+    db.exec(`CREATE TABLE tickers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      watchlist_id INTEGER NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
+      symbol TEXT NOT NULL,
+      name TEXT NOT NULL,
+      market TEXT NOT NULL CHECK (market IN ('US', 'JP', 'MY', 'TH', 'VN')),
+      position INTEGER,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(symbol, watchlist_id)
+    )`)
+    db.exec('INSERT INTO tickers SELECT * FROM tickers_v1')
+    db.exec('DROP TABLE tickers_v1')
+    db.pragma('foreign_keys = ON')
+  }
+
   // Migration: add position column to tickers (legacy)
   try { db.exec('ALTER TABLE tickers ADD COLUMN position INTEGER') } catch { /* already exists */ }
 

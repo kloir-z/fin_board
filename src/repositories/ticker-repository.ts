@@ -1,5 +1,5 @@
 import type Database from 'better-sqlite3'
-import type { Ticker } from '@/lib/types'
+import type { Ticker, Market } from '@/lib/types'
 
 interface TickerRow {
   id: number
@@ -17,7 +17,7 @@ function rowToTicker(row: TickerRow): Ticker {
     watchlistId: row.watchlist_id,
     symbol: row.symbol,
     name: row.name,
-    market: row.market as 'US' | 'JP',
+    market: row.market as Market,
     createdAt: row.created_at,
   }
 }
@@ -39,7 +39,7 @@ export function createTickerRepository(db: ReturnType<typeof Database>) {
     return row ? rowToTicker(row) : null
   }
 
-  const create = (symbol: string, name: string, market: 'US' | 'JP', watchlistId: number): Ticker => {
+  const create = (symbol: string, name: string, market: Market, watchlistId: number): Ticker => {
     if (!symbol || !symbol.trim()) throw new Error('Symbol cannot be empty')
     if (!name || !name.trim()) throw new Error('Name cannot be empty')
 

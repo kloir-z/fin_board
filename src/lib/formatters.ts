@@ -11,6 +11,15 @@ export function formatPrice(price: number, currency: string): string {
   if (currency === 'JPY') {
     return `¥${Math.round(price).toLocaleString('ja-JP')}`
   }
+  if (currency === 'MYR') {
+    return `RM${price.toFixed(2)}`
+  }
+  if (currency === 'THB') {
+    return `฿${price.toFixed(2)}`
+  }
+  if (currency === 'VND') {
+    return `₫${Math.round(price).toLocaleString()}`
+  }
   return `$${price.toFixed(2)}`
 }
 

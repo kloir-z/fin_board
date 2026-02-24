@@ -20,6 +20,22 @@ describe('formatPrice', () => {
   it('formats non-JPY currencies as USD style', () => {
     expect(formatPrice(50.123, 'EUR')).toBe('$50.12')
   })
+
+  it('formats MYR price with RM prefix and 2 decimals', () => {
+    expect(formatPrice(5.5, 'MYR')).toBe('RM5.50')
+  })
+
+  it('formats THB price with ฿ prefix and 2 decimals', () => {
+    expect(formatPrice(35.5, 'THB')).toBe('฿35.50')
+  })
+
+  it('formats VND price with ₫ prefix and no decimals', () => {
+    expect(formatPrice(25000, 'VND')).toBe('₫25,000')
+  })
+
+  it('rounds VND price to nearest integer', () => {
+    expect(formatPrice(25000.7, 'VND')).toBe('₫25,001')
+  })
 })
 
 describe('formatChartDate', () => {

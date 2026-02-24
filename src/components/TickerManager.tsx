@@ -16,7 +16,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Ticker } from '@/lib/types'
+import type { Ticker, Market } from '@/lib/types'
 
 interface TickerManagerProps {
   isOpen: boolean
@@ -75,7 +75,7 @@ export function TickerManager({ isOpen, onClose, onChange, watchlistId }: Ticker
   const [tickers, setTickers] = useState<Ticker[]>([])
   const [symbol, setSymbol] = useState('')
   const [name, setName] = useState('')
-  const [market, setMarket] = useState<'US' | 'JP'>('US')
+  const [market, setMarket] = useState<Market>('US')
   const [error, setError] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 
@@ -211,7 +211,7 @@ export function TickerManager({ isOpen, onClose, onChange, watchlistId }: Ticker
               aria-label="Ticker symbol"
             />
             <div className="flex rounded-lg border border-gray-600 overflow-hidden">
-              {(['US', 'JP'] as const).map((m) => (
+              {(['US', 'JP', 'MY', 'TH', 'VN'] as const).map((m) => (
                 <button
                   key={m}
                   onClick={() => setMarket(m)}

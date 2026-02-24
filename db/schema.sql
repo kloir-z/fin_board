@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS tickers (
   watchlist_id INTEGER NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
   symbol TEXT NOT NULL,
   name TEXT NOT NULL,
-  market TEXT NOT NULL CHECK (market IN ('US', 'JP')),
+  market TEXT NOT NULL CHECK (market IN ('US', 'JP', 'MY', 'TH', 'VN')),
   position INTEGER,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE(symbol, watchlist_id)

@@ -5,12 +5,14 @@ export interface Watchlist {
   createdAt: string
 }
 
+export type Market = 'US' | 'JP' | 'MY' | 'TH' | 'VN'
+
 export interface Ticker {
   id: number
   watchlistId: number
   symbol: string
   name: string
-  market: 'US' | 'JP'
+  market: Market
   createdAt: string
 }
 
