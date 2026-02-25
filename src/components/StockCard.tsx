@@ -1,10 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { CSSProperties } from 'react'
 import type { Quote, Timeframe } from '@/lib/types'
 import { Sparkline } from './Sparkline'
 import { useChartData } from '@/hooks/useChartData'
 import { formatPrice, getTickerUrl } from '@/lib/formatters'
+import { descriptions } from '@/lib/descriptions'
 
 // H/L の ±% に適用する強度カラー（0% = 薄い、200% = 鮮やか）
 const HL_INTENSITY_MAX = 200
@@ -16,7 +19,6 @@ function getHLPctStyle(pct: number): CSSProperties {
   return { color: `rgba(${r},${g},${b},${alpha})` }
 }
 
-
 interface StockCardProps {
   quote: Quote
   globalTimeframe?: Timeframe
@@ -25,6 +27,9 @@ interface StockCardProps {
 export function StockCard({ quote, globalTimeframe }: StockCardProps) {
   const timeframe = globalTimeframe ?? '1D'
   const { data } = useChartData(quote.symbol, timeframe)
+  const [showDesc, setShowDesc] = useState(false)
+
+  const desc = descriptions[quote.symbol]
 
   const stats = data.length >= 2 ? (() => {
     const first = data[0].value
@@ -53,7 +58,12 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
         <div className="font-semibold text-white text-xs shrink-0">{formatPrice(quote.price, quote.currency)}</div>
       </div>
       <div className="flex items-center justify-between gap-1 min-w-0">
-        <div className="font-bold text-white text-xs leading-tight truncate min-w-0 flex-1">{quote.name}</div>
+        <div
+          className={`font-bold text-white text-xs leading-tight truncate min-w-0 flex-1 relative z-20 select-none ${desc ? 'cursor-pointer active:opacity-70' : ''}`}
+          onClick={desc ? () => setShowDesc(true) : undefined}
+        >
+          {quote.name}
+        </div>
         {stats && (
           <span className={`text-[10px] shrink-0 ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
             {stats.fmtPct(stats.periodPct)}
@@ -84,6 +94,23 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
         </div>
       ) : (
         <div className="h-[9px]" />
+      )}
+
+      {showDesc && desc && createPortal(
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50"
+          onClick={() => setShowDesc(false)}
+        >
+          <div
+            className="bg-gray-900 border border-gray-600 rounded-2xl p-4 max-w-[300px] w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-[10px] text-gray-500 mb-0.5">{quote.symbol}</div>
+            <div className="text-sm font-bold text-white mb-3">{quote.name}</div>
+            <p className="text-xs text-gray-300 leading-relaxed">{desc}</p>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   )
