@@ -3,12 +3,12 @@
  * 説明文が未登録のシンボルを一覧表示するスクリプト。
  *
  * 使い方（プロジェクトルートから）:
- *   node .claude/scripts/check_descriptions.cjs
+ *   node .claude/skills/syncing-descriptions/scripts/check_descriptions.cjs
  */
 const { readFileSync } = require('fs');
 const { resolve } = require('path');
 
-const root = resolve(__dirname, '../..');
+const root = resolve(__dirname, '../../../..');
 const Database = require(resolve(root, 'node_modules/better-sqlite3'));
 
 const db = new Database(resolve(root, 'data/fin_board.db'), { readonly: true });
@@ -21,13 +21,11 @@ const rows = db.prepare(`
 `).all();
 db.close();
 
-// descriptions.ts のキーを正規表現で抽出
 const src = readFileSync(resolve(root, 'src/lib/descriptions.ts'), 'utf8');
 const keys = new Set(
   [...src.matchAll(/^\s+'?([A-Za-z0-9^.=\-]+)'?\s*:/gm)].map(m => m[1])
 );
 
-// 未登録シンボルを unique で収集（初出ウォッチリスト名付き）
 const missing = new Map();
 for (const { symbol, name, watchlist } of rows) {
   if (!keys.has(symbol) && !missing.has(symbol)) {
