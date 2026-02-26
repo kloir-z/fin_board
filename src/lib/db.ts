@@ -27,7 +27,7 @@ export function getDb(): ReturnType<typeof Database> {
       | { sql: string }
       | undefined
   )?.sql ?? ''
-  if (!tickerSchemaSql.includes("'MY'")) {
+  if (!tickerSchemaSql.includes("'MY'") || !tickerSchemaSql.includes("'KR'")) {
     db.pragma('foreign_keys = OFF')
     db.exec('ALTER TABLE tickers RENAME TO tickers_v1')
     db.exec(`CREATE TABLE tickers (
@@ -35,7 +35,7 @@ export function getDb(): ReturnType<typeof Database> {
       watchlist_id INTEGER NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
       symbol TEXT NOT NULL,
       name TEXT NOT NULL,
-      market TEXT NOT NULL CHECK (market IN ('US', 'JP', 'MY', 'TH', 'VN')),
+      market TEXT NOT NULL CHECK (market IN ('US', 'JP', 'MY', 'TH', 'VN', 'KR')),
       position INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       UNIQUE(symbol, watchlist_id)

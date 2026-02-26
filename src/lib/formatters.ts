@@ -20,6 +20,9 @@ export function formatPrice(price: number, currency: string): string {
   if (currency === 'VND') {
     return `₫${Math.round(price).toLocaleString()}`
   }
+  if (currency === 'KRW') {
+    return `₩${Math.round(price).toLocaleString()}`
+  }
   return `$${price.toFixed(2)}`
 }
 

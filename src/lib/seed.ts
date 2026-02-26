@@ -7,7 +7,7 @@ import { createWatchlistRepository } from '@/repositories/watchlist-repository'
 interface SeedEntry {
   symbol: string
   name: string
-  market: 'US' | 'JP'
+  market: 'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR'
 }
 
 interface SeedWatchlist {

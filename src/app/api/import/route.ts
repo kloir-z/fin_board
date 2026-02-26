@@ -6,7 +6,7 @@ import type Database from 'better-sqlite3'
 export interface SeedTicker {
   symbol: string
   name: string
-  market: 'US' | 'JP' | 'MY' | 'TH' | 'VN'
+  market: 'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR'
 }
 
 export interface SeedWatchlist {
@@ -17,7 +17,7 @@ export interface SeedWatchlist {
 const seedTickerSchema = z.object({
   symbol: z.string().min(1),
   name: z.string().min(1),
-  market: z.enum(['US', 'JP', 'MY', 'TH', 'VN']),
+  market: z.enum(['US', 'JP', 'MY', 'TH', 'VN', 'KR']),
 })
 
 const seedDataSchema = z.array(
@@ -102,15 +102,15 @@ export function parseCSV(data: string): SeedWatchlist[] {
     const market = row[3]?.trim().toUpperCase()
 
     if (!watchlistName || !symbol || !name) continue
-    if (!['US', 'JP', 'MY', 'TH', 'VN'].includes(market)) {
-      throw new Error(`Invalid market value at row ${i + 1}: "${market}" (must be US, JP, MY, TH, or VN)`)
+    if (!['US', 'JP', 'MY', 'TH', 'VN', 'KR'].includes(market)) {
+      throw new Error(`Invalid market value at row ${i + 1}: "${market}" (must be US, JP, MY, TH, VN, or KR)`)
     }
 
     if (!map.has(watchlistName)) {
       map.set(watchlistName, [])
       order.push(watchlistName)
     }
-    map.get(watchlistName)!.push({ symbol, name, market: market as 'US' | 'JP' | 'MY' | 'TH' | 'VN' })
+    map.get(watchlistName)!.push({ symbol, name, market: market as 'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR' })
   }
 
   if (order.length === 0) throw new Error('CSV has no valid data rows')

@@ -36,6 +36,14 @@ describe('formatPrice', () => {
   it('rounds VND price to nearest integer', () => {
     expect(formatPrice(25000.7, 'VND')).toBe('₫25,001')
   })
+
+  it('formats KRW price with ₩ prefix and no decimals', () => {
+    expect(formatPrice(75000, 'KRW')).toBe('₩75,000')
+  })
+
+  it('rounds KRW price to nearest integer', () => {
+    expect(formatPrice(75000.7, 'KRW')).toBe('₩75,001')
+  })
 })
 
 describe('formatChartDate', () => {

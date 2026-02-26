@@ -18,5 +18,13 @@
       { "symbol": "NVDA", "name": "NVIDIA Corp.",     "market": "US" },
       { "symbol": "7203.T", "name": "トヨタ自動車",  "market": "JP" }
     ]
+  },
+  {
+    "name": "韓国株",
+    "tickers": [
+      { "symbol": "005930.KS", "name": "サムスン電子",   "market": "KR" },
+      { "symbol": "000660.KS", "name": "SKハイニックス", "market": "KR" },
+      { "symbol": "035420.KS", "name": "NAVER",          "market": "KR" }
+    ]
   }
 ]

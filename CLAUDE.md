@@ -106,8 +106,8 @@ The DB file lives at `data/fin_board.db` (gitignored). Schema is applied idempot
 ### Stock Symbol Conventions
 
 - Japanese stocks use Yahoo Finance suffix: `7203.T`, `6758.T` etc.
-- `market` field on `Ticker` is `'US' | 'JP' | 'MY' | 'TH' | 'VN'` — used for display only, not for routing
-- Prices: USD `$` 2 decimals; JPY/VND `¥`/`₫` 0 decimals (rounded); MYR `RM` 2 decimals; THB `฿` 2 decimals
+- `market` field on `Ticker` is `'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR'` — used for display only, not for routing
+- Prices: USD `$` 2 decimals; JPY/VND/KRW `¥`/`₫`/`₩` 0 decimals (rounded); MYR `RM` 2 decimals; THB `฿` 2 decimals
 
 ## Watchlist & Ticker Operations
 
@@ -122,6 +122,7 @@ When the user mentions adding/removing stocks or watchlists, follow these proced
 | MY stocks | Code + `.KL` | `1155.KL` (Maybank), `1818.KL` (KLK) | `MY` |
 | TH stocks | Code + `.BK` | `PTT.BK` (PTT), `SCB.BK` (SCB) | `TH` |
 | VN stocks | Code + `.VN` | `VNM.VN` (Vinamilk), `VIC.VN` (Vingroup) | `VN` |
+| KR stocks | Code + `.KS` | `005930.KS` (Samsung), `000660.KS` (SK Hynix) | `KR` |
 | US indices | `^` prefix | `^GSPC`, `^IXIC`, `^DJI`, `^VIX` | `US` |
 | JP indices | `^` prefix | `^N225` | `JP` |
 | FX | `PAIR=X` | `USDJPY=X`, `EURUSD=X`, `EURJPY=X` | `US` |

@@ -7,7 +7,7 @@ import type Database from 'better-sqlite3'
 export interface SeedTicker {
   symbol: string
   name: string
-  market: 'US' | 'JP' | 'MY' | 'TH' | 'VN'
+  market: 'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR'
 }
 
 export interface SeedWatchlist {

@@ -5,7 +5,7 @@ export interface Watchlist {
   createdAt: string
 }
 
-export type Market = 'US' | 'JP' | 'MY' | 'TH' | 'VN'
+export type Market = 'US' | 'JP' | 'MY' | 'TH' | 'VN' | 'KR'
 
 export interface Ticker {
   id: number

@@ -23,7 +23,7 @@ describe('Tickers API logic (integration)', () => {
         watchlist_id INTEGER NOT NULL REFERENCES watchlists(id) ON DELETE CASCADE,
         symbol TEXT NOT NULL,
         name TEXT NOT NULL,
-        market TEXT NOT NULL CHECK (market IN ('US', 'JP')),
+        market TEXT NOT NULL CHECK (market IN ('US', 'JP', 'MY', 'TH', 'VN', 'KR')),
         position INTEGER,
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         UNIQUE(symbol, watchlist_id)
@@ -95,6 +95,12 @@ describe('Tickers API logic (integration)', () => {
 
     const symbols = repo.findAll(WATCHLIST_ID).map((t) => t.symbol)
     expect(symbols).toEqual(['GOOGL', 'MSFT', 'AAPL'])
+  })
+
+  it('creates a KR market ticker (simulates POST with Korean stock)', () => {
+    const ticker = repo.create('005930.KS', 'サムスン電子', 'KR', WATCHLIST_ID)
+    expect(ticker.symbol).toBe('005930.KS')
+    expect(ticker.market).toBe('KR')
   })
 
   it('same symbol can be added to different watchlists', () => {
