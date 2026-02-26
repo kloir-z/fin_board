@@ -47,7 +47,7 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
   const isUp = stats !== null ? stats.periodPct >= 0 : quote.change >= 0
 
   return (
-    <div className="bg-gray-800 rounded-lg p-2 flex flex-col gap-1 border border-gray-700">
+    <div className="bg-gray-800 rounded-lg p-2 flex flex-col gap-0.5 border border-gray-700">
       <div className="flex items-center justify-between gap-1">
         <a
           href={getTickerUrl(quote.symbol, quote.name)}
@@ -57,15 +57,15 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
         >{quote.symbol}</a>
         <div className="font-semibold text-white text-xs shrink-0">{formatPrice(quote.price, quote.currency)}</div>
       </div>
-      <div className="flex items-center justify-between gap-1 min-w-0">
-        <div
-          className={`font-bold text-white text-xs leading-tight truncate min-w-0 flex-1 relative z-20 select-none ${desc ? 'cursor-pointer active:opacity-70' : ''}`}
-          onClick={desc ? () => setShowDesc(true) : undefined}
-        >
-          {quote.name}
-        </div>
+      <div
+        className={`font-bold text-white text-xs leading-tight truncate min-w-0 relative z-20 select-none ${desc ? 'cursor-pointer active:opacity-70' : ''}`}
+        onClick={desc ? () => setShowDesc(true) : undefined}
+      >
+        {quote.name}
+      </div>
+      <div className="flex items-center min-h-[14px]">
         {stats && (
-          <span className={`text-[10px] shrink-0 ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
+          <span className={`text-[10px] ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
             {stats.fmtPct(stats.periodPct)}
           </span>
         )}
@@ -82,12 +82,10 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
       {stats ? (
         <div className="flex items-center justify-between text-[9px] leading-none">
           <span>
-            <span className="text-gray-500">H</span>{' '}
             <span className="text-gray-300">{formatPrice(stats.high, quote.currency)}</span>{' '}
             <span style={getHLPctStyle(stats.highPct)}>{stats.fmtPct(stats.highPct)}</span>
           </span>
           <span>
-            <span className="text-gray-500">L</span>{' '}
             <span className="text-gray-300">{formatPrice(stats.low, quote.currency)}</span>{' '}
             <span style={getHLPctStyle(stats.lowPct)}>{stats.fmtPct(stats.lowPct)}</span>
           </span>

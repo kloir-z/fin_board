@@ -127,7 +127,7 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe }: StockGridPro
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <SortableContext items={ordered.map((q) => q.symbol)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 p-2 isolate">
+        <div className="grid grid-cols-[repeat(auto-fill,160px)] gap-2 p-2 isolate">
           {ordered.map((quote) => (
             <SortableCard
               key={quote.symbol}
