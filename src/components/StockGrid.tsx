@@ -19,12 +19,59 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Quote, Timeframe } from '@/lib/types'
+import type { SortKey } from './RefreshIndicator'
+import { useChartDataBulk } from '@/hooks/useChartDataBulk'
 import { StockCard } from './StockCard'
+
+// 通貨コードを市場グループ番号にマッピング（同一グループは同順位）
+const CURRENCY_ORDER: Record<string, number> = {
+  USD: 0, // US・暗号・先物・FX
+  JPY: 1,
+  KRW: 2,
+  MYR: 3,
+  THB: 4,
+  VND: 5,
+}
+
+function applySortKey(
+  quotes: Quote[],
+  key: SortKey,
+  periodPctMap: Map<string, number>
+): Quote[] {
+  if (key === 'default') return quotes
+  const sorted = [...quotes]
+  if (key === 'change_desc') {
+    // 表示中の期間変動率（高い順）。未取得はマップに存在しないので後ろに
+    sorted.sort((a, b) => {
+      const pa = periodPctMap.get(a.symbol) ?? -Infinity
+      const pb = periodPctMap.get(b.symbol) ?? -Infinity
+      return pb - pa
+    })
+  } else if (key === 'change_asc') {
+    // 表示中の期間変動率（低い順）。未取得はマップに存在しないので後ろに
+    sorted.sort((a, b) => {
+      const pa = periodPctMap.get(a.symbol) ?? Infinity
+      const pb = periodPctMap.get(b.symbol) ?? Infinity
+      return pa - pb
+    })
+  } else if (key === 'market') {
+    sorted.sort((a, b) => {
+      const oa = CURRENCY_ORDER[a.currency] ?? 99
+      const ob = CURRENCY_ORDER[b.currency] ?? 99
+      if (oa !== ob) return oa - ob
+      const pa = periodPctMap.get(a.symbol) ?? 0
+      const pb = periodPctMap.get(b.symbol) ?? 0
+      return pb - pa
+    })
+  }
+  return sorted
+}
 
 interface StockGridProps {
   quotes: Quote[]
   watchlistId: number | null
   globalTimeframe?: Timeframe
+  sortKey?: SortKey
 }
 
 function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote; isDraggingThis: boolean; globalTimeframe?: Timeframe }) {
@@ -53,12 +100,16 @@ function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote
   )
 }
 
-export function StockGrid({ quotes, watchlistId, globalTimeframe }: StockGridProps) {
+export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'default' }: StockGridProps) {
   // Manage order separately from quote data.
   // This prevents server refreshes (new prices) from resetting the user-defined order.
   const [symbolOrder, setSymbolOrder] = useState<string[]>(() => quotes.map((q) => q.symbol))
   const [activeSymbol, setActiveSymbol] = useState<string | null>(null)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 期間変動率マップ（ソート用）。sortKey が default/market 以外のときのみ有効活用
+  const symbols = quotes.map((q) => q.symbol)
+  const periodPctMap = useChartDataBulk(symbols, globalTimeframe ?? '1D')
 
   // When quotes change, sync symbolOrder for additions/removals only — never reorder.
   useEffect(() => {
@@ -71,10 +122,11 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe }: StockGridPro
     })
   }, [quotes])
 
-  // Derive display order: user-defined symbol sequence with latest price data
-  const ordered = symbolOrder
+  // Derive display order: user-defined order → apply sort if active
+  const baseOrdered = symbolOrder
     .map((sym) => quotes.find((q) => q.symbol === sym))
     .filter((q): q is Quote => q !== undefined)
+  const ordered = applySortKey(baseOrdered, sortKey, periodPctMap)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -127,7 +179,7 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe }: StockGridPro
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <SortableContext items={ordered.map((q) => q.symbol)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-[repeat(auto-fill,160px)] gap-2 p-2 isolate">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,160px))] gap-2 p-2 isolate">
           {ordered.map((quote) => (
             <SortableCard
               key={quote.symbol}
