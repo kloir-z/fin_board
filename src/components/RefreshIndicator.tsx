@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Watchlist, Timeframe } from '@/lib/types'
 
+type ImportState = null | 'confirm' | 'loading' | 'success' | 'error'
+
 const ALL_TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '1Y', '2Y', '3Y', '5Y']
 
 interface RefreshIndicatorProps {
@@ -41,8 +43,12 @@ export function RefreshIndicator({
   const [renameValue, setRenameValue] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
   const [tfDropdownOpen, setTfDropdownOpen] = useState(false)
+  const [importState, setImportState] = useState<ImportState>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const [pendingImport, setPendingImport] = useState<{ format: 'json' | 'csv'; data: string } | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const tfDropdownRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const activeWatchlist = watchlists.find((w) => w.id === activeWatchlistId)
 
@@ -58,6 +64,8 @@ export function RefreshIndicator({
         setCreating(false)
         setRenamingId(null)
         setConfirmDeleteId(null)
+        setImportState(null)
+        setPendingImport(null)
       }
       if (tfDropdownRef.current && !tfDropdownRef.current.contains(e.target as Node)) {
         setTfDropdownOpen(false)
@@ -97,6 +105,47 @@ export function RefreshIndicator({
     await onDeleteWatchlist(id)
     setConfirmDeleteId(null)
     setDropdownOpen(false)
+  }
+
+  const handleExport = (format: 'json' | 'csv') => {
+    window.location.href = `/api/export?format=${format}`
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const format = file.name.toLowerCase().endsWith('.csv') ? 'csv' : 'json'
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const data = ev.target?.result as string
+      setPendingImport({ format, data })
+      setImportState('confirm')
+    }
+    reader.readAsText(file, 'utf-8')
+    e.target.value = '' // allow re-selecting the same file
+  }
+
+  const handleImportConfirm = async () => {
+    if (!pendingImport) return
+    setImportState('loading')
+    try {
+      const res = await fetch('/api/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pendingImport),
+      })
+      const json = await res.json()
+      if (!json.success) {
+        setImportError(json.error ?? 'インポートに失敗しました')
+        setImportState('error')
+        return
+      }
+      setImportState('success')
+      setTimeout(() => window.location.reload(), 800)
+    } catch {
+      setImportError('ネットワークエラー')
+      setImportState('error')
+    }
   }
 
   return (
@@ -245,6 +294,94 @@ export function RefreshIndicator({
                   ＋ 新規作成
                 </button>
               )}
+            </div>
+
+            {/* Export / Import */}
+            <div className="border-t border-gray-700 mt-1 pt-1 pb-1">
+              {/* Export row */}
+              <div className="flex items-center px-3 py-1.5 gap-1">
+                <span className="text-xs text-gray-500 flex-1">バックアップ</span>
+                <button
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={() => handleExport('json')}
+                  className="text-xs text-gray-400 hover:text-white px-2 py-1 touch-manipulation rounded hover:bg-gray-700"
+                >
+                  ↓ JSON
+                </button>
+                <button
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={() => handleExport('csv')}
+                  className="text-xs text-gray-400 hover:text-white px-2 py-1 touch-manipulation rounded hover:bg-gray-700"
+                >
+                  ↓ CSV
+                </button>
+              </div>
+
+              {/* Import row */}
+              <div className="px-3 pb-0.5">
+                {importState === null && (
+                  <button
+                    onPointerDown={(e) => e.preventDefault()}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full text-left text-xs text-gray-400 hover:text-white py-1.5 touch-manipulation"
+                  >
+                    ↑ インポート
+                  </button>
+                )}
+
+                {importState === 'confirm' && (
+                  <div className="py-1">
+                    <p className="text-xs text-amber-300 mb-2">
+                      全データが置換されます。続けますか？
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onPointerDown={(e) => e.preventDefault()}
+                        onClick={handleImportConfirm}
+                        className="flex-1 bg-amber-600 hover:bg-amber-500 text-white text-xs px-2 py-1.5 rounded touch-manipulation"
+                      >
+                        実行
+                      </button>
+                      <button
+                        onPointerDown={(e) => e.preventDefault()}
+                        onClick={() => { setImportState(null); setPendingImport(null) }}
+                        className="text-xs text-gray-400 hover:text-gray-200 px-2 py-1.5 touch-manipulation"
+                      >
+                        キャンセル
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {importState === 'loading' && (
+                  <p className="text-xs text-gray-400 py-1.5">インポート中...</p>
+                )}
+
+                {importState === 'success' && (
+                  <p className="text-xs text-green-400 py-1.5">インポート完了 ✓</p>
+                )}
+
+                {importState === 'error' && (
+                  <div className="py-1">
+                    <p className="text-xs text-red-400 mb-1">{importError}</p>
+                    <button
+                      onPointerDown={(e) => e.preventDefault()}
+                      onClick={() => { setImportState(null); setImportError(null) }}
+                      className="text-xs text-gray-400 hover:text-gray-200 touch-manipulation"
+                    >
+                      閉じる
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,.csv"
+                className="hidden"
+                onChange={handleFileChange}
+              />
             </div>
           </div>
         )}
