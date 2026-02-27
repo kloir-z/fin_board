@@ -293,7 +293,7 @@ export function Sparkline({ data, isPositive, height = 60, timeframe, currency }
             bottom: 'calc(100% + 4px)',
             left: tooltipLeft,
             pointerEvents: 'none',
-            zIndex: 10,
+            zIndex: 30,
             whiteSpace: 'nowrap',
           }}
           className="bg-gray-900 border border-gray-600 rounded px-2 py-1 text-xs text-white shadow-lg"
