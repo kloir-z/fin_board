@@ -12,9 +12,6 @@ const defaultWatchlist: Watchlist = {
 function renderIndicator(overrides: Partial<React.ComponentProps<typeof RefreshIndicator>> = {}) {
   return render(
     <RefreshIndicator
-      lastUpdated={null}
-      onRefresh={jest.fn()}
-      isLoading={false}
       watchlists={[defaultWatchlist]}
       activeWatchlistId={1}
       onSelectWatchlist={jest.fn()}
@@ -22,49 +19,18 @@ function renderIndicator(overrides: Partial<React.ComponentProps<typeof RefreshI
       onCreateWatchlist={jest.fn().mockResolvedValue(undefined)}
       onRenameWatchlist={jest.fn().mockResolvedValue(undefined)}
       onDeleteWatchlist={jest.fn().mockResolvedValue(undefined)}
+      globalTimeframe="1D"
+      onGlobalTimeframeChange={jest.fn()}
+      sortKey="default"
+      onSortChange={jest.fn()}
+      isFrozen={false}
+      onFreezeChange={jest.fn()}
       {...overrides}
     />
   )
 }
 
 describe('RefreshIndicator', () => {
-  it('shows -- when lastUpdated is null', () => {
-    renderIndicator()
-    expect(screen.getByText('--:--:--')).toBeInTheDocument()
-  })
-
-  it('shows formatted time when lastUpdated is set', () => {
-    renderIndicator({ lastUpdated: new Date('2024-01-15T10:30:00') })
-    expect(screen.getByText(/10:30/)).toBeInTheDocument()
-  })
-
-  it('shows spinner icon when isLoading is true', () => {
-    renderIndicator({ isLoading: true })
-    expect(screen.getByText('...')).toBeInTheDocument()
-  })
-
-  it('shows refresh icon when not loading', () => {
-    renderIndicator()
-    expect(screen.getByText('↺')).toBeInTheDocument()
-  })
-
-  it('disables refresh button when loading', () => {
-    renderIndicator({ isLoading: true })
-    expect(screen.getByText('...')).toBeDisabled()
-  })
-
-  it('calls onRefresh when refresh button clicked', () => {
-    const onRefresh = jest.fn()
-    renderIndicator({ onRefresh })
-    fireEvent.click(screen.getByText('↺'))
-    expect(onRefresh).toHaveBeenCalledTimes(1)
-  })
-
-  it('shows delay disclaimer text', () => {
-    renderIndicator()
-    expect(screen.getByText(/15-20m/)).toBeInTheDocument()
-  })
-
   it('shows active watchlist name', () => {
     renderIndicator()
     expect(screen.getByText('Default')).toBeInTheDocument()
@@ -91,5 +57,48 @@ describe('RefreshIndicator', () => {
     renderIndicator({ watchlists, activeWatchlistId: 1 })
     fireEvent.click(screen.getAllByText('Default')[0])
     expect(screen.getByText('✓')).toBeInTheDocument()
+  })
+
+  it('shows current timeframe in dropdown button', () => {
+    renderIndicator({ globalTimeframe: '1M' })
+    expect(screen.getByText('1M')).toBeInTheDocument()
+  })
+
+  it('shows sort key label', () => {
+    renderIndicator({ sortKey: 'change_desc' })
+    expect(screen.getByText('↑%')).toBeInTheDocument()
+  })
+
+  it('calls onSortChange when sort option clicked', () => {
+    const onSortChange = jest.fn()
+    renderIndicator({ onSortChange })
+    // ソートドロップダウンを開く（デフォルトラベルは「並順」）
+    fireEvent.click(screen.getByText('並順'))
+    fireEvent.click(screen.getByText('↑%'))
+    expect(onSortChange).toHaveBeenCalledWith('change_desc')
+  })
+
+  it('shows 🔓 when isFrozen is false', () => {
+    renderIndicator({ isFrozen: false })
+    expect(screen.getByLabelText('並び順を固定')).toBeInTheDocument()
+  })
+
+  it('shows 🔒 when isFrozen is true', () => {
+    renderIndicator({ isFrozen: true })
+    expect(screen.getByLabelText('固定解除')).toBeInTheDocument()
+  })
+
+  it('calls onFreezeChange(true) when freeze button clicked while not frozen', () => {
+    const onFreezeChange = jest.fn()
+    renderIndicator({ isFrozen: false, onFreezeChange })
+    fireEvent.click(screen.getByLabelText('並び順を固定'))
+    expect(onFreezeChange).toHaveBeenCalledWith(true)
+  })
+
+  it('calls onFreezeChange(false) when freeze button clicked while frozen', () => {
+    const onFreezeChange = jest.fn()
+    renderIndicator({ isFrozen: true, onFreezeChange })
+    fireEvent.click(screen.getByLabelText('固定解除'))
+    expect(onFreezeChange).toHaveBeenCalledWith(false)
   })
 })

@@ -72,6 +72,7 @@ interface StockGridProps {
   watchlistId: number | null
   globalTimeframe?: Timeframe
   sortKey?: SortKey
+  isFrozen?: boolean
 }
 
 function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote; isDraggingThis: boolean; globalTimeframe?: Timeframe }) {
@@ -100,11 +101,12 @@ function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote
   )
 }
 
-export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'default' }: StockGridProps) {
+export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'default', isFrozen = false }: StockGridProps) {
   // Manage order separately from quote data.
   // This prevents server refreshes (new prices) from resetting the user-defined order.
   const [symbolOrder, setSymbolOrder] = useState<string[]>(() => quotes.map((q) => q.symbol))
   const [activeSymbol, setActiveSymbol] = useState<string | null>(null)
+  const [frozenOrder, setFrozenOrder] = useState<string[] | null>(null)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 期間変動率マップ（ソート用）。sortKey が default/market 以外のときのみ有効活用
@@ -126,7 +128,26 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'def
   const baseOrdered = symbolOrder
     .map((sym) => quotes.find((q) => q.symbol === sym))
     .filter((q): q is Quote => q !== undefined)
-  const ordered = applySortKey(baseOrdered, sortKey, periodPctMap)
+  const sortedOrdered = applySortKey(baseOrdered, sortKey, periodPctMap)
+
+  // 固定中は frozenOrder を使う（quotes に存在するシンボルのみ）
+  const ordered = isFrozen && frozenOrder !== null
+    ? frozenOrder
+        .map((sym) => quotes.find((q) => q.symbol === sym))
+        .filter((q): q is Quote => q !== undefined)
+    : sortedOrdered
+
+  // isFrozen の変化を検知してスナップショットを管理
+  useEffect(() => {
+    if (isFrozen) {
+      // false → true: 現在の表示順をスナップショット
+      setFrozenOrder(sortedOrdered.map((q) => q.symbol))
+    } else {
+      // true → false: クリア（次フレームで sortedOrdered が使われる）
+      setFrozenOrder(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFrozen])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -151,27 +172,35 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'def
     const { active, over } = event
     if (!over || active.id === over.id) return
 
-    const oldIndex = symbolOrder.indexOf(String(active.id))
-    const newIndex = symbolOrder.indexOf(String(over.id))
+    // 表示ベース（ordered）のインデックスで計算する
+    const displayedSymbols = ordered.map((q) => q.symbol)
+    const oldIndex = displayedSymbols.indexOf(String(active.id))
+    const newIndex = displayedSymbols.indexOf(String(over.id))
     if (oldIndex === -1 || newIndex === -1) return
 
-    const newSymbolOrder = arrayMove(symbolOrder, oldIndex, newIndex)
-    setSymbolOrder(newSymbolOrder)
+    if (isFrozen && frozenOrder !== null) {
+      // 固定中: frozenOrder のみ更新（server への PATCH は行わない）
+      setFrozenOrder(arrayMove(frozenOrder, oldIndex, newIndex))
+    } else {
+      // 通常: symbolOrder を更新して server に保存
+      const newSymbolOrder = arrayMove(displayedSymbols, oldIndex, newIndex)
+      setSymbolOrder(newSymbolOrder)
 
-    if (saveTimer.current) clearTimeout(saveTimer.current)
-    if (watchlistId === null) return
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      if (watchlistId === null) return
 
-    saveTimer.current = setTimeout(async () => {
-      try {
-        await fetch('/api/tickers', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ order: newSymbolOrder, watchlistId }),
-        })
-      } catch {
-        // order will re-sync on next server refresh
-      }
-    }, 500)
+      saveTimer.current = setTimeout(async () => {
+        try {
+          await fetch('/api/tickers', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order: newSymbolOrder, watchlistId }),
+          })
+        } catch {
+          // order will re-sync on next server refresh
+        }
+      }, 500)
+    }
   }
 
   const activeQuote = quotes.find((q) => q.symbol === activeSymbol) ?? null
@@ -179,7 +208,7 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'def
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <SortableContext items={ordered.map((q) => q.symbol)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,160px))] gap-2 p-2 isolate">
+        <div className="grid grid-cols-3 sm:grid-cols-[repeat(auto-fill,minmax(160px,160px))] gap-2 p-2 isolate">
           {ordered.map((quote) => (
             <SortableCard
               key={quote.symbol}

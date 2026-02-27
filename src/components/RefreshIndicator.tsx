@@ -5,12 +5,18 @@ import type { Watchlist, Timeframe } from '@/lib/types'
 
 type ImportState = null | 'confirm' | 'loading' | 'success' | 'error'
 
-const ALL_TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '1Y', '2Y', '3Y', '5Y']
+const ALL_TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '6M', '1Y', '2Y', '3Y', '5Y']
+
+export type SortKey = 'default' | 'change_desc' | 'change_asc' | 'market'
+
+const SORT_LABELS: Record<SortKey, string> = {
+  default: '並順',
+  change_desc: '↑%',
+  change_asc: '↓%',
+  market: '市場',
+}
 
 interface RefreshIndicatorProps {
-  lastUpdated: Date | null
-  onRefresh: () => void
-  isLoading: boolean
   watchlists: Watchlist[]
   activeWatchlistId: number | null
   onSelectWatchlist: (id: number) => void
@@ -20,12 +26,13 @@ interface RefreshIndicatorProps {
   onDeleteWatchlist: (id: number) => Promise<void>
   globalTimeframe: Timeframe
   onGlobalTimeframeChange: (tf: Timeframe) => void
+  sortKey: SortKey
+  onSortChange: (key: SortKey) => void
+  isFrozen: boolean
+  onFreezeChange: (v: boolean) => void
 }
 
 export function RefreshIndicator({
-  lastUpdated,
-  onRefresh,
-  isLoading,
   watchlists,
   activeWatchlistId,
   onSelectWatchlist,
@@ -35,6 +42,10 @@ export function RefreshIndicator({
   onDeleteWatchlist,
   globalTimeframe,
   onGlobalTimeframeChange,
+  sortKey,
+  onSortChange,
+  isFrozen,
+  onFreezeChange,
 }: RefreshIndicatorProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [creating, setCreating] = useState(false)
@@ -43,18 +54,16 @@ export function RefreshIndicator({
   const [renameValue, setRenameValue] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
   const [tfDropdownOpen, setTfDropdownOpen] = useState(false)
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false)
   const [importState, setImportState] = useState<ImportState>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const [pendingImport, setPendingImport] = useState<{ format: 'json' | 'csv'; data: string } | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const tfDropdownRef = useRef<HTMLDivElement>(null)
+  const sortDropdownRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const activeWatchlist = watchlists.find((w) => w.id === activeWatchlistId)
-
-  const timeStr = lastUpdated
-    ? lastUpdated.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-    : '--:--:--'
 
   // Close dropdowns on outside tap/click
   useEffect(() => {
@@ -69,6 +78,9 @@ export function RefreshIndicator({
       }
       if (tfDropdownRef.current && !tfDropdownRef.current.contains(e.target as Node)) {
         setTfDropdownOpen(false)
+      }
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(e.target as Node)) {
+        setSortDropdownOpen(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -424,21 +436,53 @@ export function RefreshIndicator({
         )}
       </div>
 
+      {/* Sort dropdown */}
+      <div className="relative" ref={sortDropdownRef}>
+        <button
+          onClick={() => setSortDropdownOpen((o) => !o)}
+          className={`flex items-center gap-0.5 text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
+            sortKey !== 'default'
+              ? 'text-blue-300 bg-blue-900/50 hover:bg-blue-900/70'
+              : 'text-white bg-gray-800 hover:bg-gray-700'
+          }`}
+        >
+          <span>{SORT_LABELS[sortKey]}</span>
+          <span className="text-gray-400 text-[8px]">{sortDropdownOpen ? '▴' : '▾'}</span>
+        </button>
+        {sortDropdownOpen && (
+          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[72px]">
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+              <button
+                key={key}
+                onClick={() => { onSortChange(key); setSortDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
+                  sortKey === key
+                    ? 'text-blue-400 font-semibold bg-gray-700'
+                    : 'text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {SORT_LABELS[key]}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Freeze button */}
+      <button
+        onClick={() => onFreezeChange(!isFrozen)}
+        className={`text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
+          isFrozen
+            ? 'text-amber-300 bg-amber-900/50 hover:bg-amber-900/70'
+            : 'text-gray-400 bg-gray-800 hover:bg-gray-700'
+        }`}
+        aria-label={isFrozen ? '固定解除' : '並び順を固定'}
+      >
+        {isFrozen ? '🔒' : '🔓'}
+      </button>
+
       {/* Spacer */}
       <div className="flex-1" />
-
-      {/* Updated time + refresh */}
-      <span className="text-xs text-gray-500">
-        <span className="text-gray-400">{timeStr}</span>
-        <span className="ml-1 text-gray-600 text-[10px]">(15-20m)</span>
-      </span>
-      <button
-        onClick={onRefresh}
-        disabled={isLoading}
-        className="text-xs text-blue-400 hover:text-blue-300 disabled:opacity-40 touch-manipulation px-2 py-1"
-      >
-        {isLoading ? '...' : '↺'}
-      </button>
     </div>
   )
 }

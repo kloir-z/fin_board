@@ -7,7 +7,7 @@ interface TimeframeSelectorProps {
   onChange: (tf: Timeframe) => void
 }
 
-const TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '1Y', '2Y', '3Y', '5Y']
+const TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '6M', '1Y', '2Y', '3Y', '5Y']
 
 export function TimeframeSelector({ active, onChange }: TimeframeSelectorProps) {
   return (

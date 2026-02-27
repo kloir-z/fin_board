@@ -22,8 +22,9 @@ interface TimeframeConfig {
 const TIMEFRAME_CONFIG: Record<Timeframe, TimeframeConfig> = {
   '1D': { interval: '5m', rangeInDays: 5 },  // 5日遡ることで週末でも直近取引日を取得
   '1W': { interval: '15m', rangeInDays: 7 },
-  '1M': { interval: '1d', rangeInDays: 30 },
+  '1M': { interval: '90m', rangeInDays: 30 }, // 90分足で細粒化
   '3M': { interval: '1d', rangeInDays: 90 },
+  '6M': { interval: '1d', rangeInDays: 180 },
   '1Y': { interval: '1wk', rangeInDays: 365 },
   '2Y': { interval: '1wk', rangeInDays: 730 },
   '3Y': { interval: '1wk', rangeInDays: 1095 },

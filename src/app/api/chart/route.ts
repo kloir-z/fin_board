@@ -6,7 +6,7 @@ import type { ApiResponse, ChartPoint, Timeframe } from '@/lib/types'
 
 const querySchema = z.object({
   symbol: z.string().min(1).max(20),
-  timeframe: z.enum(['1D', '1W', '1M', '3M', '1Y', '2Y', '3Y', '5Y']),
+  timeframe: z.enum(['1D', '1W', '1M', '3M', '6M', '1Y', '2Y', '3Y', '5Y']),
 })
 
 export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse<ChartPoint[]>>> {

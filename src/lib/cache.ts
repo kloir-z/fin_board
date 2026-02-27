@@ -9,6 +9,7 @@ const CHART_TTL: Record<Timeframe, number> = {
   '1W': 60,
   '1M': 360,
   '3M': 360,
+  '6M': 720,
   '1Y': 720,
   '2Y': 1440,
   '3Y': 1440,

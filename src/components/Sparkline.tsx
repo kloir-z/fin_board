@@ -19,6 +19,7 @@ const TIMEFRAME_RANGE_SECONDS: Record<Timeframe, number | null> = {
   '1W': 7 * 86400,
   '1M': 30 * 86400,
   '3M': 90 * 86400,
+  '6M': 180 * 86400,
   '1Y': 365 * 86400,
   '2Y': 2 * 365 * 86400,
   '3Y': 3 * 365 * 86400,
@@ -59,7 +60,7 @@ function getCalendarBoundaries(tf: Timeframe, startTs: number, endTs: number): n
       result.push(d.getTime() / 1000)
       d.setUTCDate(d.getUTCDate() + 7)
     }
-  } else if (tf === '3M') {
+  } else if (tf === '3M' || tf === '6M') {
     // 月次: 毎月1日
     const d = new Date(Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), 1))
     while (d.getTime() / 1000 < startTs) d.setUTCMonth(d.getUTCMonth() + 1)
