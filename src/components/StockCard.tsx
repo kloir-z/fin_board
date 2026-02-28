@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import type { CSSProperties } from 'react'
 import type { Quote, Timeframe } from '@/lib/types'
@@ -22,12 +22,14 @@ function getHLPctStyle(pct: number): CSSProperties {
 interface StockCardProps {
   quote: Quote
   globalTimeframe?: Timeframe
+  onMenuOpen?: (symbol: string, name: string, currency: string, rect: DOMRect) => void
 }
 
-export function StockCard({ quote, globalTimeframe }: StockCardProps) {
+export function StockCard({ quote, globalTimeframe, onMenuOpen }: StockCardProps) {
   const timeframe = globalTimeframe ?? '1D'
   const { data } = useChartData(quote.symbol, timeframe)
   const [showDesc, setShowDesc] = useState(false)
+  const priceRef = useRef<HTMLDivElement>(null)
 
   const desc = descriptions[quote.symbol]
 
@@ -55,7 +57,14 @@ export function StockCard({ quote, globalTimeframe }: StockCardProps) {
           rel="noopener noreferrer"
           className="text-[10px] text-gray-500 shrink-0 relative z-20 hover:text-gray-300 hover:underline"
         >{quote.symbol}</a>
-        <div className="font-semibold text-white text-xs shrink-0">{formatPrice(quote.price, quote.currency)}</div>
+        <div
+          ref={priceRef}
+          className={`font-semibold text-white text-xs shrink-0 relative z-20 select-none ${onMenuOpen ? 'cursor-pointer touch-manipulation active:opacity-60' : ''}`}
+          onClick={onMenuOpen ? () => {
+            const rect = priceRef.current?.getBoundingClientRect()
+            if (rect) onMenuOpen(quote.symbol, quote.name, quote.currency, rect)
+          } : undefined}
+        >{formatPrice(quote.price, quote.currency)}</div>
       </div>
       <div
         className={`font-bold text-white text-xs leading-tight truncate min-w-0 relative z-20 select-none ${desc ? 'cursor-pointer active:opacity-70' : ''}`}

@@ -54,7 +54,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950">
+    <main className="min-h-screen bg-gray-950 pb-16"
+      style={{ paddingBottom: 'max(64px, calc(56px + env(safe-area-inset-bottom)))' }}
+    >
       <RefreshIndicator
         watchlists={watchlists}
         activeWatchlistId={activeId}
@@ -80,7 +82,7 @@ export default function DashboardPage() {
       {isLoading && quotes.length === 0 ? (
         <StockGridSkeleton count={10} />
       ) : (
-        <StockGrid quotes={quotes} watchlistId={activeId} globalTimeframe={globalTimeframe} sortKey={sortKey} isFrozen={isFrozen} />
+        <StockGrid quotes={quotes} watchlistId={activeId} globalTimeframe={globalTimeframe} sortKey={sortKey} isFrozen={isFrozen} watchlists={watchlists} onRefresh={refresh} />
       )}
 
       <TickerManager

@@ -161,7 +161,90 @@ export function RefreshIndicator({
   }
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-gray-900 border-b border-gray-700 sticky top-0 z-20">
+    <div
+      className="flex items-center gap-2 px-3 pt-2 bg-gray-900 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-20"
+      style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
+    >
+      {/* Left group: timeframe, sort, freeze */}
+      <div className="flex items-center gap-2 flex-1">
+
+      {/* Global timeframe dropdown */}
+      <div className="relative" ref={tfDropdownRef}>
+        <button
+          onClick={() => setTfDropdownOpen((o) => !o)}
+          className="flex items-center gap-0.5 text-[10px] font-medium text-white bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded touch-manipulation"
+        >
+          <span>{globalTimeframe}</span>
+          <span className="text-gray-400 text-[8px]">{tfDropdownOpen ? '▴' : '▾'}</span>
+        </button>
+        {tfDropdownOpen && (
+          <div className="absolute bottom-full left-0 mb-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[56px]">
+            {ALL_TIMEFRAMES.map((tf) => (
+              <button
+                key={tf}
+                onClick={() => { onGlobalTimeframeChange(tf); setTfDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
+                  globalTimeframe === tf
+                    ? 'text-blue-400 font-semibold bg-gray-700'
+                    : 'text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Sort dropdown */}
+      <div className="relative" ref={sortDropdownRef}>
+        <button
+          onClick={() => setSortDropdownOpen((o) => !o)}
+          className={`flex items-center gap-0.5 text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
+            sortKey !== 'default'
+              ? 'text-blue-300 bg-blue-900/50 hover:bg-blue-900/70'
+              : 'text-white bg-gray-800 hover:bg-gray-700'
+          }`}
+        >
+          <span>{SORT_LABELS[sortKey]}</span>
+          <span className="text-gray-400 text-[8px]">{sortDropdownOpen ? '▴' : '▾'}</span>
+        </button>
+        {sortDropdownOpen && (
+          <div className="absolute bottom-full left-0 mb-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[72px]">
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+              <button
+                key={key}
+                onClick={() => { onSortChange(key); setSortDropdownOpen(false) }}
+                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
+                  sortKey === key
+                    ? 'text-blue-400 font-semibold bg-gray-700'
+                    : 'text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {SORT_LABELS[key]}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Freeze button */}
+      <button
+        onClick={() => onFreezeChange(!isFrozen)}
+        className={`text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
+          isFrozen
+            ? 'text-amber-300 bg-amber-900/50 hover:bg-amber-900/70'
+            : 'text-gray-400 bg-gray-800 hover:bg-gray-700'
+        }`}
+        aria-label={isFrozen ? '固定解除' : '並び順を固定'}
+      >
+        {isFrozen ? '🔒' : '🔓'}
+      </button>
+
+      </div>{/* end left group */}
+
+      {/* Right group: watchlist dropdown + add button */}
+
       {/* Watchlist dropdown */}
       <div className="relative" ref={dropdownRef}>
         <button
@@ -178,7 +261,7 @@ export function RefreshIndicator({
         </button>
 
         {dropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl min-w-[220px] z-50 py-1 overflow-y-auto max-h-[70vh]">
+          <div className="absolute bottom-full right-0 mb-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl min-w-[220px] z-50 py-1 overflow-y-auto max-h-[70vh]">
             {watchlists.map((w) => (
               <div key={w.id}>
                 {renamingId === w.id ? (
@@ -408,81 +491,6 @@ export function RefreshIndicator({
         +
       </button>
 
-      {/* Global timeframe dropdown */}
-      <div className="relative" ref={tfDropdownRef}>
-        <button
-          onClick={() => setTfDropdownOpen((o) => !o)}
-          className="flex items-center gap-0.5 text-[10px] font-medium text-white bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded touch-manipulation"
-        >
-          <span>{globalTimeframe}</span>
-          <span className="text-gray-400 text-[8px]">{tfDropdownOpen ? '▴' : '▾'}</span>
-        </button>
-        {tfDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[56px]">
-            {ALL_TIMEFRAMES.map((tf) => (
-              <button
-                key={tf}
-                onClick={() => { onGlobalTimeframeChange(tf); setTfDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
-                  globalTimeframe === tf
-                    ? 'text-blue-400 font-semibold bg-gray-700'
-                    : 'text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                {tf}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Sort dropdown */}
-      <div className="relative" ref={sortDropdownRef}>
-        <button
-          onClick={() => setSortDropdownOpen((o) => !o)}
-          className={`flex items-center gap-0.5 text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
-            sortKey !== 'default'
-              ? 'text-blue-300 bg-blue-900/50 hover:bg-blue-900/70'
-              : 'text-white bg-gray-800 hover:bg-gray-700'
-          }`}
-        >
-          <span>{SORT_LABELS[sortKey]}</span>
-          <span className="text-gray-400 text-[8px]">{sortDropdownOpen ? '▴' : '▾'}</span>
-        </button>
-        {sortDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 py-1 overflow-hidden min-w-[72px]">
-            {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
-              <button
-                key={key}
-                onClick={() => { onSortChange(key); setSortDropdownOpen(false) }}
-                className={`w-full text-left px-3 py-1.5 text-xs touch-manipulation ${
-                  sortKey === key
-                    ? 'text-blue-400 font-semibold bg-gray-700'
-                    : 'text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                {SORT_LABELS[key]}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Freeze button */}
-      <button
-        onClick={() => onFreezeChange(!isFrozen)}
-        className={`text-[10px] font-medium px-2 py-1 rounded touch-manipulation ${
-          isFrozen
-            ? 'text-amber-300 bg-amber-900/50 hover:bg-amber-900/70'
-            : 'text-gray-400 bg-gray-800 hover:bg-gray-700'
-        }`}
-        aria-label={isFrozen ? '固定解除' : '並び順を固定'}
-      >
-        {isFrozen ? '🔒' : '🔓'}
-      </button>
-
-      {/* Spacer */}
-      <div className="flex-1" />
     </div>
   )
 }

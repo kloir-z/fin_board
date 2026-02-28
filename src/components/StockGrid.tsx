@@ -18,10 +18,11 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Quote, Timeframe } from '@/lib/types'
+import type { Quote, Timeframe, Watchlist, Market } from '@/lib/types'
 import type { SortKey } from './RefreshIndicator'
 import { useChartDataBulk } from '@/hooks/useChartDataBulk'
 import { StockCard } from './StockCard'
+import { CardActionMenu } from './CardActionMenu'
 
 // 通貨コードを市場グループ番号にマッピング（同一グループは同順位）
 const CURRENCY_ORDER: Record<string, number> = {
@@ -73,9 +74,21 @@ interface StockGridProps {
   globalTimeframe?: Timeframe
   sortKey?: SortKey
   isFrozen?: boolean
+  watchlists?: Watchlist[]
+  onRefresh?: () => void
 }
 
-function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote; isDraggingThis: boolean; globalTimeframe?: Timeframe }) {
+function SortableCard({
+  quote,
+  isDraggingThis,
+  globalTimeframe,
+  onMenuOpen,
+}: {
+  quote: Quote
+  isDraggingThis: boolean
+  globalTimeframe?: Timeframe
+  onMenuOpen?: (symbol: string, name: string, currency: string, rect: DOMRect) => void
+}) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: quote.symbol,
   })
@@ -96,18 +109,61 @@ function SortableCard({ quote, isDraggingThis, globalTimeframe }: { quote: Quote
         className="absolute top-0 left-0 right-0 h-10 z-10 touch-none cursor-grab active:cursor-grabbing select-none"
         aria-label="ドラッグして並べ替え"
       />
-      <StockCard quote={quote} globalTimeframe={globalTimeframe} />
+      <StockCard quote={quote} globalTimeframe={globalTimeframe} onMenuOpen={onMenuOpen} />
     </div>
   )
 }
 
-export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'default', isFrozen = false }: StockGridProps) {
+export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'default', isFrozen = false, watchlists = [], onRefresh }: StockGridProps) {
   // Manage order separately from quote data.
   // This prevents server refreshes (new prices) from resetting the user-defined order.
   const [symbolOrder, setSymbolOrder] = useState<string[]>(() => quotes.map((q) => q.symbol))
   const [activeSymbol, setActiveSymbol] = useState<string | null>(null)
   const [frozenOrder, setFrozenOrder] = useState<string[] | null>(null)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Card action menu state
+  const [menuTarget, setMenuTarget] = useState<{
+    symbol: string
+    name: string
+    currency: string
+    rect: DOMRect
+  } | null>(null)
+
+  const handleMenuOpen = (symbol: string, name: string, currency: string, rect: DOMRect) => {
+    setMenuTarget({ symbol, name, currency, rect })
+  }
+
+  const handleCopy = async (symbol: string, name: string, market: Market, destWatchlistId: number) => {
+    await fetch('/api/tickers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol, name, market, watchlistId: destWatchlistId }),
+    })
+  }
+
+  const handleMove = async (symbol: string, name: string, market: Market, srcWatchlistId: number, destWatchlistId: number) => {
+    await fetch('/api/tickers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol, name, market, watchlistId: destWatchlistId }),
+    })
+    await fetch('/api/tickers', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol, watchlistId: srcWatchlistId }),
+    })
+    onRefresh?.()
+  }
+
+  const handleDelete = async (symbol: string, fromWatchlistId: number) => {
+    await fetch('/api/tickers', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol, watchlistId: fromWatchlistId }),
+    })
+    onRefresh?.()
+  }
 
   // 期間変動率マップ（ソート用）。sortKey が default/market 以外のときのみ有効活用
   const symbols = quotes.map((q) => q.symbol)
@@ -206,27 +262,45 @@ export function StockGrid({ quotes, watchlistId, globalTimeframe, sortKey = 'def
   const activeQuote = quotes.find((q) => q.symbol === activeSymbol) ?? null
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <SortableContext items={ordered.map((q) => q.symbol)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-3 sm:grid-cols-[repeat(auto-fill,minmax(160px,160px))] gap-2 p-2 isolate">
-          {ordered.map((quote) => (
-            <SortableCard
-              key={quote.symbol}
-              quote={quote}
-              isDraggingThis={quote.symbol === activeSymbol}
-              globalTimeframe={globalTimeframe}
-            />
-          ))}
-        </div>
-      </SortableContext>
-
-      <DragOverlay>
-        {activeQuote && (
-          <div className="rotate-2 shadow-2xl opacity-90 scale-105">
-            <StockCard quote={activeQuote} globalTimeframe={globalTimeframe} />
+    <>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <SortableContext items={ordered.map((q) => q.symbol)} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-3 sm:grid-cols-[repeat(auto-fill,minmax(160px,160px))] gap-2 p-2 isolate">
+            {ordered.map((quote) => (
+              <SortableCard
+                key={quote.symbol}
+                quote={quote}
+                isDraggingThis={quote.symbol === activeSymbol}
+                globalTimeframe={globalTimeframe}
+                onMenuOpen={handleMenuOpen}
+              />
+            ))}
           </div>
-        )}
-      </DragOverlay>
-    </DndContext>
+        </SortableContext>
+
+        <DragOverlay>
+          {activeQuote && (
+            <div className="rotate-2 shadow-2xl opacity-90 scale-105">
+              <StockCard quote={activeQuote} globalTimeframe={globalTimeframe} />
+            </div>
+          )}
+        </DragOverlay>
+      </DndContext>
+
+      {menuTarget && watchlistId !== null && (
+        <CardActionMenu
+          symbol={menuTarget.symbol}
+          name={menuTarget.name}
+          currency={menuTarget.currency}
+          anchorRect={menuTarget.rect}
+          watchlists={watchlists}
+          activeWatchlistId={watchlistId}
+          onClose={() => setMenuTarget(null)}
+          onCopy={handleCopy}
+          onMove={handleMove}
+          onDelete={handleDelete}
+        />
+      )}
+    </>
   )
 }
