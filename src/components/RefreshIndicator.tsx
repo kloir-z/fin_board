@@ -316,10 +316,10 @@ export function RefreshIndicator({
                   <div className="flex items-center">
                     <button
                       onClick={() => handleSelect(w.id)}
-                      className="flex-1 flex items-center gap-1.5 text-left px-3 py-2.5 text-sm hover:bg-gray-700 touch-manipulation"
+                      className="flex-1 flex items-center gap-1.5 text-left px-3 py-1.5 text-xs hover:bg-gray-700 touch-manipulation"
                     >
                       {w.id === activeWatchlistId
-                        ? <span className="text-blue-400 text-xs w-3">✓</span>
+                        ? <span className="text-blue-400 text-[10px] w-3">✓</span>
                         : <span className="w-3" />
                       }
                       <span className={w.id === activeWatchlistId ? 'text-white font-medium' : 'text-gray-300'}>
@@ -330,7 +330,7 @@ export function RefreshIndicator({
                     <button
                       onPointerDown={(e) => e.preventDefault()}
                       onClick={() => { setRenamingId(w.id); setRenameValue(w.name); setConfirmDeleteId(null) }}
-                      className="px-2.5 py-2.5 text-gray-400 hover:text-white active:text-white touch-manipulation text-sm"
+                      className="px-2 py-1.5 text-gray-400 hover:text-white active:text-white touch-manipulation text-xs"
                       aria-label={`${w.name}を名前変更`}
                     >
                       ✎
@@ -340,7 +340,7 @@ export function RefreshIndicator({
                       <button
                         onPointerDown={(e) => e.preventDefault()}
                         onClick={() => { setConfirmDeleteId(w.id); setRenamingId(null) }}
-                        className="px-2.5 py-2.5 text-red-500 hover:text-red-300 active:text-red-300 touch-manipulation text-sm"
+                        className="px-2 py-1.5 text-red-500 hover:text-red-300 active:text-red-300 touch-manipulation text-xs"
                         aria-label={`${w.name}を削除`}
                       >
                         🗑
@@ -384,7 +384,7 @@ export function RefreshIndicator({
               ) : (
                 <button
                   onClick={() => { setCreating(true); setRenamingId(null); setConfirmDeleteId(null) }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-blue-400 hover:bg-gray-700 touch-manipulation"
+                  className="w-full text-left px-4 py-1.5 text-xs text-blue-400 hover:bg-gray-700 touch-manipulation"
                 >
                   ＋ 新規作成
                 </button>
