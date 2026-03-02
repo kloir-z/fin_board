@@ -854,4 +854,6 @@ export const descriptions: Record<string, string> = {
     'キーパー技研は洗車後のコーティング施工「KeePer」ブランドを展開する日本の専門サービス企業。全国のキーパーLABOや提携GSでカーコーティングを提供し、業務用コーティング剤の開発・販売も手掛ける。',
   INVE:
     'Identivはサイバーセキュリティとフィジカルセキュリティを融合したIoTソリューション企業。RFIDリーダー、スマートカードアクセス制御、政府・医療向け高信頼性IDインフラを提供する米国上場の中小型株。',
+  GLDM:
+    'State StreetのSPDR Gold MiniShares Trustは現物金に裏付けられた低コストのゴールドETF。GLD比で保有コストが低く、金価格へのコスト効率の良いエクスポージャーを提供する。',
 }
