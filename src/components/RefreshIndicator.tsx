@@ -7,13 +7,16 @@ type ImportState = null | 'confirm' | 'loading' | 'success' | 'error'
 
 const ALL_TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '6M', '1Y', '2Y', '3Y', '5Y']
 
-export type SortKey = 'default' | 'change_desc' | 'change_asc' | 'market'
+export type SortKey = 'default' | 'change_desc' | 'change_asc' | 'market' | 'mcap_desc' | 'mcap_asc' | 'score_desc'
 
 const SORT_LABELS: Record<SortKey, string> = {
   default: '並順',
   change_desc: '↑%',
   change_asc: '↓%',
   market: '市場',
+  mcap_desc: '時価総額↓',
+  mcap_asc: '時価総額↑',
+  score_desc: '小型↑%',
 }
 
 interface RefreshIndicatorProps {
@@ -316,15 +319,13 @@ export function RefreshIndicator({
                   <div className="flex items-center">
                     <button
                       onClick={() => handleSelect(w.id)}
-                      className="flex-1 flex items-center gap-1.5 text-left px-3 py-1.5 text-xs hover:bg-gray-700 touch-manipulation"
+                      className={`flex-1 text-left px-3 py-1.5 text-xs touch-manipulation ${
+                        w.id === activeWatchlistId
+                          ? 'bg-blue-900/40 text-white font-medium'
+                          : 'text-gray-300 hover:bg-gray-700'
+                      }`}
                     >
-                      {w.id === activeWatchlistId
-                        ? <span className="text-blue-400 text-[10px] w-3">✓</span>
-                        : <span className="w-3" />
-                      }
-                      <span className={w.id === activeWatchlistId ? 'text-white font-medium' : 'text-gray-300'}>
-                        {w.name}
-                      </span>
+                      {w.name}
                     </button>
                     {/* Rename button — always visible */}
                     <button
@@ -395,7 +396,6 @@ export function RefreshIndicator({
             <div className="border-t border-gray-700 mt-1 pt-1 pb-1">
               {/* Export row */}
               <div className="flex items-center px-3 py-1.5 gap-1">
-                <span className="text-xs text-gray-500 flex-1">バックアップ</span>
                 <button
                   onPointerDown={(e) => e.preventDefault()}
                   onClick={() => handleExport('json')}

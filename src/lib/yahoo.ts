@@ -64,10 +64,28 @@ export async function fetchQuotes(symbols: string[]): Promise<Quote[]> {
       currency: q.currency ?? 'USD',
       marketState: q.marketState ?? 'UNKNOWN',
       updatedAt: now,
+      marketCap: q.marketCap ?? undefined,
     })
   }
 
   return quotes
+}
+
+export async function fetchFxRates(currencies: string[]): Promise<Record<string, number>> {
+  const nonUsd = currencies.filter((c) => c !== 'USD')
+  if (nonUsd.length === 0) return {}
+
+  const symbols = nonUsd.map((c) => `${c}USD=X`)
+  const results = await Promise.allSettled(symbols.map((s) => getYf().quote(s)))
+
+  const rates: Record<string, number> = {}
+  for (let i = 0; i < nonUsd.length; i++) {
+    const result = results[i]
+    if (result.status === 'fulfilled' && result.value?.regularMarketPrice) {
+      rates[nonUsd[i]] = result.value.regularMarketPrice
+    }
+  }
+  return rates
 }
 
 export async function fetchChart(symbol: string, timeframe: Timeframe): Promise<ChartPoint[]> {

@@ -64,6 +64,28 @@ function applySortKey(
       const pb = periodPctMap.get(b.symbol) ?? 0
       return pb - pa
     })
+  } else if (key === 'mcap_desc') {
+    sorted.sort((a, b) => {
+      const ma = a.marketCapUsd ?? -Infinity
+      const mb = b.marketCapUsd ?? -Infinity
+      return mb - ma
+    })
+  } else if (key === 'mcap_asc') {
+    sorted.sort((a, b) => {
+      const ma = a.marketCapUsd ?? Infinity
+      const mb = b.marketCapUsd ?? Infinity
+      return ma - mb
+    })
+  } else if (key === 'score_desc') {
+    // 小型株×勢い: changePercent ÷ log10(marketCapUsd)
+    // 時価総額が小さいほど÷数が小さくなり、同じ変化率なら小型が上位になる
+    const score = (q: Quote): number => {
+      if (!q.marketCapUsd || q.marketCapUsd <= 0) return -Infinity
+      const logCap = Math.log10(q.marketCapUsd)
+      if (logCap <= 0) return -Infinity
+      return q.changePercent / logCap
+    }
+    sorted.sort((a, b) => score(b) - score(a))
   }
   return sorted
 }

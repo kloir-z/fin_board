@@ -12,6 +12,22 @@ import { descriptions } from '@/lib/descriptions'
 // H/L の ±% に適用する強度カラー（0% = 薄い、200% = 鮮やか）
 const HL_INTENSITY_MAX = 200
 
+// USD換算時価総額の log10 固定レンジ（$100M 〜 $5T）
+const MARKET_CAP_USD_LOG_MIN = 8
+const MARKET_CAP_USD_LOG_MAX = 12.7
+
+function getMarketCapBarHeight(marketCapUsd: number): number {
+  const logVal = Math.log10(marketCapUsd)
+  return Math.min(100, Math.max(3, ((logVal - MARKET_CAP_USD_LOG_MIN) / (MARKET_CAP_USD_LOG_MAX - MARKET_CAP_USD_LOG_MIN)) * 100))
+}
+
+function formatMarketCapUsd(usd: number): string {
+  if (usd >= 1e12) return `$${(usd / 1e12).toFixed(2)}T`
+  if (usd >= 1e9) return `$${(usd / 1e9).toFixed(1)}B`
+  if (usd >= 1e6) return `$${(usd / 1e6).toFixed(0)}M`
+  return `$${usd.toFixed(0)}`
+}
+
 function getHLPctStyle(pct: number): CSSProperties {
   const t = Math.min(Math.abs(pct) / HL_INTENSITY_MAX, 1)
   const alpha = (0.2 + t * 0.8).toFixed(2)
@@ -49,7 +65,7 @@ export function StockCard({ quote, globalTimeframe, onMenuOpen }: StockCardProps
   const isUp = stats !== null ? stats.periodPct >= 0 : quote.change >= 0
 
   return (
-    <div className="bg-gray-800 rounded-lg p-2 flex flex-col gap-0.5 border border-gray-700">
+    <div className="relative overflow-hidden bg-gray-800 rounded-lg p-2 flex flex-col gap-0.5 border border-gray-700">
       <div className="flex items-center justify-between gap-1">
         <a
           href={getTickerUrl(quote.symbol, quote.name)}
@@ -103,6 +119,19 @@ export function StockCard({ quote, globalTimeframe, onMenuOpen }: StockCardProps
         <div className="h-[9px]" />
       )}
 
+      {quote.marketCapUsd && (
+        <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gray-700/40">
+          <div
+            className="absolute bottom-0 w-full bg-emerald-400/50"
+            style={{ height: `${getMarketCapBarHeight(quote.marketCapUsd)}%` }}
+          />
+          {[9, 10, 11, 12].map((exp) => {
+            const pct = ((exp - MARKET_CAP_USD_LOG_MIN) / (MARKET_CAP_USD_LOG_MAX - MARKET_CAP_USD_LOG_MIN)) * 100
+            return <div key={exp} className="absolute w-full h-px bg-white/20" style={{ bottom: `${pct}%` }} />
+          })}
+        </div>
+      )}
+
       {showDesc && desc && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50"
@@ -113,7 +142,10 @@ export function StockCard({ quote, globalTimeframe, onMenuOpen }: StockCardProps
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-[10px] text-gray-500 mb-0.5">{quote.symbol}</div>
-            <div className="text-sm font-bold text-white mb-3">{quote.name}</div>
+            <div className="text-sm font-bold text-white mb-1">{quote.name}</div>
+            {quote.marketCapUsd && (
+              <div className="text-[10px] text-gray-400 mb-3">時価総額 {formatMarketCapUsd(quote.marketCapUsd)}</div>
+            )}
             <p className="text-xs text-gray-300 leading-relaxed">{desc}</p>
           </div>
         </div>,

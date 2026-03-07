@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3'
 import { createCacheRepository } from '@/repositories/cache-repository'
-import { fetchQuotes, fetchChart } from './yahoo'
+import { fetchQuotes, fetchChart, fetchFxRates } from './yahoo'
 import type { ChartPoint, Quote, Timeframe } from './types'
 
 const QUOTE_TTL_MINUTES = 5
@@ -76,5 +76,38 @@ export function createCacheOrchestrator(db: ReturnType<typeof Database>) {
     return fresh
   }
 
-  return { getCachedQuotes, getCachedChart }
+  const FX_TTL_MINUTES = 60
+
+  const getCachedFxRates = async (currencies: string[]): Promise<Record<string, number>> => {
+    const nonUsd = currencies.filter((c) => c !== 'USD')
+    if (nonUsd.length === 0) return {}
+
+    const rates: Record<string, number> = {}
+    const stale: string[] = []
+
+    for (const currency of nonUsd) {
+      const hit = cache.get('__fx__', currency, FX_TTL_MINUTES)
+      if (hit && hit.length > 0) {
+        rates[currency] = hit[0].value
+      } else {
+        stale.push(currency)
+      }
+    }
+
+    if (stale.length > 0) {
+      try {
+        const fresh = await fetchFxRates(stale)
+        for (const [currency, rate] of Object.entries(fresh)) {
+          cache.set('__fx__', currency, [{ time: 0, value: rate }])
+          rates[currency] = rate
+        }
+      } catch {
+        // FX取得失敗時は取得済み分だけ返す
+      }
+    }
+
+    return rates
+  }
+
+  return { getCachedQuotes, getCachedChart, getCachedFxRates }
 }

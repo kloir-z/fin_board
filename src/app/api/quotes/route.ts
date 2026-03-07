@@ -42,7 +42,17 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse<Qu
     const nameMap = new Map(tickers.map((t) => [t.symbol, t.name]))
     const enriched = quotes.map((q) => ({ ...q, name: nameMap.get(q.symbol) ?? q.symbol }))
 
-    return NextResponse.json({ success: true, data: enriched })
+    // Compute marketCapUsd via FX rates
+    const currencies = [...new Set(enriched.map((q) => q.currency))]
+    const fxRates = await orchestrator.getCachedFxRates(currencies)
+    const withMarketCapUsd = enriched.map((q) => {
+      if (!q.marketCap) return q
+      const rate = q.currency === 'USD' ? 1 : fxRates[q.currency]
+      if (!rate) return q
+      return { ...q, marketCapUsd: q.marketCap * rate }
+    })
+
+    return NextResponse.json({ success: true, data: withMarketCapUsd })
   } catch (error) {
     console.error('GET /api/quotes error:', error)
     return NextResponse.json({ success: false, error: 'Failed to fetch quotes' }, { status: 500 })

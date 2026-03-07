@@ -26,6 +26,8 @@ export interface Quote {
   currency: string
   marketState: string
   updatedAt: string
+  marketCap?: number
+  marketCapUsd?: number
 }
 
 export interface ChartPoint {
