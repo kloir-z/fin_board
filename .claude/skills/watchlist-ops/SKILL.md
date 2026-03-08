@@ -23,6 +23,12 @@ description: ウォッチリスト(リスト)や銘柄(ticker)の追加・削除
 
 ## Add a ticker
 
+**Step 0 — シンボルが不確かな場合は必ずWebSearchで確認してから追加する:**
+
+- 特にETF・指数・先物は、連番コードが全く別の商品を指すことがある（例: 2036=金先物ETN, 2517=JリートETF）
+- 会社名・ETF名からシンボルを推測しない。必ず `WebSearch` で銘柄コードと正式名称を照合すること
+- 確認前に絶対にPOSTしない
+
 **Step 1 — Get watchlist IDs:**
 ```bash
 curl -s http://localhost:3000/api/watchlists | jq '.data[] | {id, name}'
@@ -38,12 +44,19 @@ curl -s -X POST http://localhost:3000/api/tickers \
 - `404 Symbol not found` → wrong symbol
 - `400 Invalid` → fix casing / format
 
-**Step 3 — Append to seed.json (use `map(if ...)` form; `(map(...)|.[0].tickers)+=` is invalid):**
+**Step 3 — Append to seed.json (jqは日本語を含むウォッチリスト名で失敗するため、python3を使う):**
 ```bash
-jq 'map(if .name == "<WATCHLIST_NAME>" then .tickers += [
-  {"symbol":"AAPL","name":"Apple Inc.","market":"US"}
-] else . end)' /home/user/code/fin_board/seed.json \
-  > /tmp/seed_new.json && mv /tmp/seed_new.json /home/user/code/fin_board/seed.json
+python3 -c "
+import json
+with open('/home/user/code/fin_board/seed.json') as f:
+    data = json.load(f)
+for wl in data:
+    if wl['name'] == '<WATCHLIST_NAME>':
+        wl['tickers'].append({'symbol':'AAPL','name':'Apple Inc.','market':'US'})
+with open('/home/user/code/fin_board/seed.json', 'w') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+print('done')
+"
 ```
 
 ## Remove a ticker
@@ -60,10 +73,19 @@ curl -s -X DELETE http://localhost:3000/api/tickers \
   -d '{"symbol":"AAPL","watchlistId":1}' | jq .
 ```
 
-**Step 3 — Remove from seed.json:**
+**Step 3 — Remove from seed.json (python3を使う):**
 ```bash
-jq 'map(if .name == "<WATCHLIST_NAME>" then .tickers |= map(select(.symbol != "AAPL")) else . end)' \
-  /home/user/code/fin_board/seed.json > /tmp/seed_new.json && mv /tmp/seed_new.json /home/user/code/fin_board/seed.json
+python3 -c "
+import json
+with open('/home/user/code/fin_board/seed.json') as f:
+    data = json.load(f)
+for wl in data:
+    if wl['name'] == '<WATCHLIST_NAME>':
+        wl['tickers'] = [t for t in wl['tickers'] if t['symbol'] != 'AAPL']
+with open('/home/user/code/fin_board/seed.json', 'w') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+print('done')
+"
 ```
 
 ## Create a watchlist
