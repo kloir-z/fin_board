@@ -1,0 +1,1637 @@
+[
+  {
+    "name": "マーケット概況",
+    "tickers": [
+      {
+        "symbol": "^GSPC",
+        "name": "S&P500",
+        "market": "US"
+      },
+      {
+        "symbol": "^IXIC",
+        "name": "NASDAQ Composite",
+        "market": "US"
+      },
+      {
+        "symbol": "^DJI",
+        "name": "Dow Jones",
+        "market": "US"
+      },
+      {
+        "symbol": "^VIX",
+        "name": "恐怖指数 (VIX)",
+        "market": "US"
+      },
+      {
+        "symbol": "^N225",
+        "name": "日経平均",
+        "market": "JP"
+      },
+      {
+        "symbol": "USDJPY=X",
+        "name": "USD/JPY",
+        "market": "JP"
+      },
+      {
+        "symbol": "EURUSD=X",
+        "name": "EUR/USD",
+        "market": "US"
+      },
+      {
+        "symbol": "GC=F",
+        "name": "金先物",
+        "market": "US"
+      },
+      {
+        "symbol": "CL=F",
+        "name": "WTI原油",
+        "market": "US"
+      },
+      {
+        "symbol": "BTC-USD",
+        "name": "ビットコイン",
+        "market": "US"
+      },
+      {
+        "symbol": "^KLSE",
+        "name": "マレーシア総合指数 (KLCI)",
+        "market": "MY"
+      },
+      {
+        "symbol": "^SET.BK",
+        "name": "タイ SET 指数",
+        "market": "TH"
+      },
+      {
+        "symbol": "^KS11",
+        "name": "韓国 KOSPI",
+        "market": "KR"
+      },
+      {
+        "symbol": "^HSI",
+        "name": "香港 ハンセン指数",
+        "market": "US"
+      },
+      {
+        "symbol": "000001.SS",
+        "name": "上海総合指数",
+        "market": "US"
+      },
+      {
+        "symbol": "^STI",
+        "name": "シンガポール STI",
+        "market": "US"
+      },
+      {
+        "symbol": "^NSEI",
+        "name": "インド Nifty 50",
+        "market": "US"
+      },
+      {
+        "symbol": "^TWII",
+        "name": "台湾加権指数",
+        "market": "US"
+      },
+      {
+        "symbol": "^STOXX50E",
+        "name": "Euro Stoxx 50",
+        "market": "US"
+      },
+      {
+        "symbol": "^FTSE",
+        "name": "FTSE 100（英国）",
+        "market": "US"
+      },
+      {
+        "symbol": "^GDAXI",
+        "name": "DAX（ドイツ）",
+        "market": "US"
+      },
+      {
+        "symbol": "^AXJO",
+        "name": "ASX 200（オーストラリア）",
+        "market": "US"
+      },
+      {
+        "symbol": "EURJPY=X",
+        "name": "EUR/JPY",
+        "market": "US"
+      },
+      {
+        "symbol": "CNYJPY=X",
+        "name": "CNY/JPY",
+        "market": "US"
+      },
+      {
+        "symbol": "USDTHB=X",
+        "name": "USD/THB",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "テック大型株",
+    "tickers": [
+      {
+        "symbol": "AAPL",
+        "name": "Apple",
+        "market": "US"
+      },
+      {
+        "symbol": "MSFT",
+        "name": "Microsoft",
+        "market": "US"
+      },
+      {
+        "symbol": "GOOGL",
+        "name": "Alphabet",
+        "market": "US"
+      },
+      {
+        "symbol": "AMZN",
+        "name": "Amazon.com",
+        "market": "US"
+      },
+      {
+        "symbol": "META",
+        "name": "Meta Platforms",
+        "market": "US"
+      },
+      {
+        "symbol": "NVDA",
+        "name": "NVIDIA",
+        "market": "US"
+      },
+      {
+        "symbol": "TSLA",
+        "name": "Tesla",
+        "market": "US"
+      },
+      {
+        "symbol": "ORCL",
+        "name": "Oracle",
+        "market": "US"
+      },
+      {
+        "symbol": "ADBE",
+        "name": "Adobe",
+        "market": "US"
+      },
+      {
+        "symbol": "CRM",
+        "name": "Salesforce",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "AI・半導体",
+    "tickers": [
+      {
+        "symbol": "AMD",
+        "name": "Advanced Micro Devices",
+        "market": "US"
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel",
+        "market": "US"
+      },
+      {
+        "symbol": "ARM",
+        "name": "ARM Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "AVGO",
+        "name": "Broadcom",
+        "market": "US"
+      },
+      {
+        "symbol": "MRVL",
+        "name": "Marvell Technology",
+        "market": "US"
+      },
+      {
+        "symbol": "ALAB",
+        "name": "Astera Labs",
+        "market": "US"
+      },
+      {
+        "symbol": "SMCI",
+        "name": "Super Micro Computer",
+        "market": "US"
+      },
+      {
+        "symbol": "PLTR",
+        "name": "Palantir Technologies",
+        "market": "US"
+      },
+      {
+        "symbol": "AI",
+        "name": "C3.ai",
+        "market": "US"
+      },
+      {
+        "symbol": "PATH",
+        "name": "UiPath",
+        "market": "US"
+      },
+      {
+        "symbol": "TSM",
+        "name": "Taiwan Semiconductor Mfg.",
+        "market": "US"
+      },
+      {
+        "symbol": "ASML",
+        "name": "ASML Holding",
+        "market": "US"
+      },
+      {
+        "symbol": "MU",
+        "name": "Micron Technology",
+        "market": "US"
+      },
+      {
+        "symbol": "EQIX",
+        "name": "Equinix",
+        "market": "US"
+      },
+      {
+        "symbol": "DLR",
+        "name": "Digital Realty Trt",
+        "market": "US"
+      },
+      {
+        "symbol": "VRT",
+        "name": "Vertiv Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "ETN",
+        "name": "Eaton",
+        "market": "US"
+      },
+      {
+        "symbol": "AMAT",
+        "name": "Applied Materials",
+        "market": "US"
+      },
+      {
+        "symbol": "LRCX",
+        "name": "Lam Research",
+        "market": "US"
+      },
+      {
+        "symbol": "ONTO",
+        "name": "Onto Innovation",
+        "market": "US"
+      },
+      {
+        "symbol": "ANET",
+        "name": "Arista Networks",
+        "market": "US"
+      },
+      {
+        "symbol": "CIEN",
+        "name": "Ciena",
+        "market": "US"
+      },
+      {
+        "symbol": "LITE",
+        "name": "Lumentum Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "COHR",
+        "name": "Coherent",
+        "market": "US"
+      },
+      {
+        "symbol": "CEG",
+        "name": "Constellation Energy",
+        "market": "US"
+      },
+      {
+        "symbol": "NEE",
+        "name": "NextEra Energy",
+        "market": "US"
+      },
+      {
+        "symbol": "5803.T",
+        "name": "フジクラ",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "ロボティクス",
+    "tickers": [
+      {
+        "symbol": "TSLA",
+        "name": "Tesla（Optimus）",
+        "market": "US"
+      },
+      {
+        "symbol": "ISRG",
+        "name": "Intuitive Surgical",
+        "market": "US"
+      },
+      {
+        "symbol": "TER",
+        "name": "Teradyne",
+        "market": "US"
+      },
+      {
+        "symbol": "CGNX",
+        "name": "Cognex",
+        "market": "US"
+      },
+      {
+        "symbol": "ROK",
+        "name": "Rockwell Automation",
+        "market": "US"
+      },
+      {
+        "symbol": "ABB",
+        "name": "ABB Ltd.",
+        "market": "US"
+      },
+      {
+        "symbol": "6954.T",
+        "name": "FANUC",
+        "market": "JP"
+      },
+      {
+        "symbol": "6506.T",
+        "name": "安川電機",
+        "market": "JP"
+      },
+      {
+        "symbol": "6645.T",
+        "name": "オムロン",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "量子コンピューティング",
+    "tickers": [
+      {
+        "symbol": "IONQ",
+        "name": "IonQ",
+        "market": "US"
+      },
+      {
+        "symbol": "RGTI",
+        "name": "Rigetti Computing",
+        "market": "US"
+      },
+      {
+        "symbol": "QBTS",
+        "name": "D-Wave Quantum",
+        "market": "US"
+      },
+      {
+        "symbol": "QUBT",
+        "name": "Quantum Computing",
+        "market": "US"
+      },
+      {
+        "symbol": "IBM",
+        "name": "IBM",
+        "market": "US"
+      },
+      {
+        "symbol": "GOOGL",
+        "name": "Alphabet",
+        "market": "US"
+      },
+      {
+        "symbol": "MSFT",
+        "name": "Microsoft",
+        "market": "US"
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "隠れた注目株",
+    "tickers": [
+      {
+        "symbol": "ASML",
+        "name": "ASML Holding",
+        "market": "US"
+      },
+      {
+        "symbol": "KLAC",
+        "name": "KLA",
+        "market": "US"
+      },
+      {
+        "symbol": "ENTG",
+        "name": "Entegris",
+        "market": "US"
+      },
+      {
+        "symbol": "WOLF",
+        "name": "Wolfspeed",
+        "market": "US"
+      },
+      {
+        "symbol": "IPGP",
+        "name": "IPG Photonics",
+        "market": "US"
+      },
+      {
+        "symbol": "SITM",
+        "name": "SiTime",
+        "market": "US"
+      },
+      {
+        "symbol": "ALGM",
+        "name": "Allegro MicroSystems",
+        "market": "US"
+      },
+      {
+        "symbol": "8035.T",
+        "name": "東京エレクトロン",
+        "market": "JP"
+      },
+      {
+        "symbol": "6857.T",
+        "name": "アドバンテスト",
+        "market": "JP"
+      },
+      {
+        "symbol": "6920.T",
+        "name": "レーザーテック",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "インフラ・仮想化・ストレージ",
+    "tickers": [
+      {
+        "symbol": "PSTG",
+        "name": "Pure Storage",
+        "market": "US"
+      },
+      {
+        "symbol": "NTAP",
+        "name": "NetApp",
+        "market": "US"
+      },
+      {
+        "symbol": "NTNX",
+        "name": "Nutanix",
+        "market": "US"
+      },
+      {
+        "symbol": "HPE",
+        "name": "Hewlett Packard Enterprise",
+        "market": "US"
+      },
+      {
+        "symbol": "DELL",
+        "name": "Dell Technologies",
+        "market": "US"
+      },
+      {
+        "symbol": "CVLT",
+        "name": "Commvault Systems",
+        "market": "US"
+      },
+      {
+        "symbol": "6702.T",
+        "name": "富士通",
+        "market": "JP"
+      },
+      {
+        "symbol": "6701.T",
+        "name": "日本電気（NEC）",
+        "market": "JP"
+      },
+      {
+        "symbol": "6501.T",
+        "name": "日立製作所",
+        "market": "JP"
+      },
+      {
+        "symbol": "9719.T",
+        "name": "SCSK",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "サイバーセキュリティ",
+    "tickers": [
+      {
+        "symbol": "CRWD",
+        "name": "CrowdStrike Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "PANW",
+        "name": "Palo Alto Networks",
+        "market": "US"
+      },
+      {
+        "symbol": "FTNT",
+        "name": "Fortinet",
+        "market": "US"
+      },
+      {
+        "symbol": "ZS",
+        "name": "Zscaler",
+        "market": "US"
+      },
+      {
+        "symbol": "S",
+        "name": "SentinelOne",
+        "market": "US"
+      },
+      {
+        "symbol": "4704.T",
+        "name": "トレンドマイクロ",
+        "market": "JP"
+      },
+      {
+        "symbol": "4493.T",
+        "name": "サイバーセキュリティクラウド",
+        "market": "JP"
+      },
+      {
+        "symbol": "2326.T",
+        "name": "デジタルアーツ",
+        "market": "JP"
+      },
+      {
+        "symbol": "3692.T",
+        "name": "FFRIセキュリティ",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "バックアップ・データ保護",
+    "tickers": [
+      {
+        "symbol": "RBRK",
+        "name": "Rubrik",
+        "market": "US"
+      },
+      {
+        "symbol": "CVLT",
+        "name": "Commvault Systems",
+        "market": "US"
+      },
+      {
+        "symbol": "IRM",
+        "name": "Iron Mountain",
+        "market": "US"
+      },
+      {
+        "symbol": "QMCO",
+        "name": "Quantum",
+        "market": "US"
+      },
+      {
+        "symbol": "4307.T",
+        "name": "野村総合研究所（NRI）",
+        "market": "JP"
+      },
+      {
+        "symbol": "3774.T",
+        "name": "インターネットイニシアティブ（IIJ）",
+        "market": "JP"
+      },
+      {
+        "symbol": "8056.T",
+        "name": "BIPROGY（旧日本ユニシス）",
+        "market": "JP"
+      },
+      {
+        "symbol": "4768.T",
+        "name": "大塚商会",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "クラウドインフラ・ハイブリッド",
+    "tickers": [
+      {
+        "symbol": "AVGO",
+        "name": "Broadcom (VMware)",
+        "market": "US"
+      },
+      {
+        "symbol": "DDOG",
+        "name": "Datadog",
+        "market": "US"
+      },
+      {
+        "symbol": "DT",
+        "name": "Dynatrace",
+        "market": "US"
+      },
+      {
+        "symbol": "NOW",
+        "name": "ServiceNow",
+        "market": "US"
+      },
+      {
+        "symbol": "CSCO",
+        "name": "Cisco Systems",
+        "market": "US"
+      },
+      {
+        "symbol": "3626.T",
+        "name": "TIS",
+        "market": "JP"
+      },
+      {
+        "symbol": "4307.T",
+        "name": "野村総合研究所（NRI）",
+        "market": "JP"
+      },
+      {
+        "symbol": "3778.T",
+        "name": "さくらインターネット",
+        "market": "JP"
+      },
+      {
+        "symbol": "9449.T",
+        "name": "GMOインターネットグループ",
+        "market": "JP"
+      },
+      {
+        "symbol": "3774.T",
+        "name": "インターネットイニシアティブ（IIJ）",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "ヒューマノイド関連",
+    "tickers": [
+      {
+        "symbol": "TSLA",
+        "name": "Tesla（Optimus）",
+        "market": "US"
+      },
+      {
+        "symbol": "NVDA",
+        "name": "NVIDIA（Isaac / GR00T）",
+        "market": "US"
+      },
+      {
+        "symbol": "GOOGL",
+        "name": "Alphabet（DeepMind Robotics）",
+        "market": "US"
+      },
+      {
+        "symbol": "AMZN",
+        "name": "Amazon（Agility Robotics）",
+        "market": "US"
+      },
+      {
+        "symbol": "7267.T",
+        "name": "ホンダ",
+        "market": "JP"
+      },
+      {
+        "symbol": "7012.T",
+        "name": "川崎重工業（Kaleido）",
+        "market": "JP"
+      },
+      {
+        "symbol": "6324.T",
+        "name": "ハーモニックドライブシステムズ",
+        "market": "JP"
+      },
+      {
+        "symbol": "9984.T",
+        "name": "ソフトバンクグループ",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "スペース・宇宙産業",
+    "tickers": [
+      {
+        "symbol": "RKLB",
+        "name": "Rocket Lab USA",
+        "market": "US"
+      },
+      {
+        "symbol": "ASTS",
+        "name": "AST SpaceMobile",
+        "market": "US"
+      },
+      {
+        "symbol": "LUNR",
+        "name": "Intuitive Machines",
+        "market": "US"
+      },
+      {
+        "symbol": "SPCE",
+        "name": "Virgin Galactic",
+        "market": "US"
+      },
+      {
+        "symbol": "ASTR",
+        "name": "Astra Space",
+        "market": "US"
+      },
+      {
+        "symbol": "BA",
+        "name": "Boeing",
+        "market": "US"
+      },
+      {
+        "symbol": "LMT",
+        "name": "Lockheed Martin",
+        "market": "US"
+      },
+      {
+        "symbol": "RTX",
+        "name": "RTX (Raytheon)",
+        "market": "US"
+      },
+      {
+        "symbol": "NOC",
+        "name": "Northrop Grumman",
+        "market": "US"
+      },
+      {
+        "symbol": "GD",
+        "name": "General Dynamics",
+        "market": "US"
+      },
+      {
+        "symbol": "7011.T",
+        "name": "三菱重工業",
+        "market": "JP"
+      },
+      {
+        "symbol": "7013.T",
+        "name": "IHI",
+        "market": "JP"
+      },
+      {
+        "symbol": "9412.T",
+        "name": "スカパーJSATホールディングス",
+        "market": "JP"
+      },
+      {
+        "symbol": "9348.T",
+        "name": "アイ・スペース",
+        "market": "JP"
+      },
+      {
+        "symbol": "186A.T",
+        "name": "アストロスケール",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "SOC・SIEM・SOAR",
+    "tickers": [
+      {
+        "symbol": "MSFT",
+        "name": "Microsoft（Sentinel）",
+        "market": "US"
+      },
+      {
+        "symbol": "CSCO",
+        "name": "Cisco（Splunk買収）",
+        "market": "US"
+      },
+      {
+        "symbol": "ESTC",
+        "name": "Elastic（Elastic SIEM）",
+        "market": "US"
+      },
+      {
+        "symbol": "IBM",
+        "name": "IBM（QRadar SIEM）",
+        "market": "US"
+      },
+      {
+        "symbol": "NOW",
+        "name": "ServiceNow（Security Ops/SOAR）",
+        "market": "US"
+      },
+      {
+        "symbol": "3132.T",
+        "name": "マクニカホールディングス",
+        "market": "JP"
+      },
+      {
+        "symbol": "6501.T",
+        "name": "日立製作所（SOCサービス）",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "マレーシア株",
+    "tickers": [
+      {
+        "symbol": "1155.KL",
+        "name": "Maybank",
+        "market": "MY"
+      },
+      {
+        "symbol": "1023.KL",
+        "name": "CIMB Group",
+        "market": "MY"
+      },
+      {
+        "symbol": "5347.KL",
+        "name": "Tenaga Nasional",
+        "market": "MY"
+      },
+      {
+        "symbol": "5681.KL",
+        "name": "Petronas Chemicals",
+        "market": "MY"
+      }
+    ]
+  },
+  {
+    "name": "タイ株",
+    "tickers": [
+      {
+        "symbol": "PTT.BK",
+        "name": "PTT PCL",
+        "market": "TH"
+      },
+      {
+        "symbol": "AOT.BK",
+        "name": "Airports of Thailand",
+        "market": "TH"
+      },
+      {
+        "symbol": "ADVANC.BK",
+        "name": "Advanced Info Service",
+        "market": "TH"
+      },
+      {
+        "symbol": "KBANK.BK",
+        "name": "Kasikorn Bank",
+        "market": "TH"
+      },
+      {
+        "symbol": "DELTA.BK",
+        "name": "Delta Electronics (Thailand)",
+        "market": "TH"
+      },
+      {
+        "symbol": "GULF.BK",
+        "name": "Gulf Energy Development PCL",
+        "market": "TH"
+      },
+      {
+        "symbol": "BDMS.BK",
+        "name": "Bangkok Dusit Medical Services",
+        "market": "TH"
+      },
+      {
+        "symbol": "PTTEP.BK",
+        "name": "PTT Exploration and Production",
+        "market": "TH"
+      },
+      {
+        "symbol": "SCC.BK",
+        "name": "Siam Cement PCL",
+        "market": "TH"
+      },
+      {
+        "symbol": "TRUE.BK",
+        "name": "True Corporation PCL",
+        "market": "TH"
+      }
+    ]
+  },
+  {
+    "name": "ベトナム株",
+    "tickers": [
+      {
+        "symbol": "VNM.VN",
+        "name": "Vinamilk",
+        "market": "VN"
+      },
+      {
+        "symbol": "VIC.VN",
+        "name": "Vingroup",
+        "market": "VN"
+      },
+      {
+        "symbol": "VCB.VN",
+        "name": "Vietcombank",
+        "market": "VN"
+      },
+      {
+        "symbol": "FPT.VN",
+        "name": "FPT Corporation",
+        "market": "VN"
+      },
+      {
+        "symbol": "HPG.VN",
+        "name": "Hoa Phat Group",
+        "market": "VN"
+      }
+    ]
+  },
+  {
+    "name": "オルタナティブ資産運用",
+    "tickers": [
+      {
+        "symbol": "OWL",
+        "name": "Blue Owl Capital",
+        "market": "US"
+      },
+      {
+        "symbol": "ARES",
+        "name": "Ares Management",
+        "market": "US"
+      },
+      {
+        "symbol": "BX",
+        "name": "Blackstone",
+        "market": "US"
+      },
+      {
+        "symbol": "APO",
+        "name": "Apollo Global Management",
+        "market": "US"
+      },
+      {
+        "symbol": "KKR",
+        "name": "KKR & Co.",
+        "market": "US"
+      },
+      {
+        "symbol": "TPG",
+        "name": "TPG Inc.",
+        "market": "US"
+      },
+      {
+        "symbol": "BLK",
+        "name": "BlackRock",
+        "market": "US"
+      },
+      {
+        "symbol": "OBDC",
+        "name": "Blue Owl Capital Corporation",
+        "market": "US"
+      },
+      {
+        "symbol": "ARCC",
+        "name": "Ares Capital Corporation",
+        "market": "US"
+      },
+      {
+        "symbol": "BXSL",
+        "name": "Blackstone Secured Lending Fund",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "韓国株",
+    "tickers": [
+      {
+        "symbol": "005930.KS",
+        "name": "サムスン電子",
+        "market": "KR"
+      },
+      {
+        "symbol": "000660.KS",
+        "name": "SKハイニックス",
+        "market": "KR"
+      },
+      {
+        "symbol": "035420.KS",
+        "name": "NAVER",
+        "market": "KR"
+      },
+      {
+        "symbol": "035720.KS",
+        "name": "カカオ",
+        "market": "KR"
+      },
+      {
+        "symbol": "005380.KS",
+        "name": "現代自動車",
+        "market": "KR"
+      },
+      {
+        "symbol": "000270.KS",
+        "name": "起亜",
+        "market": "KR"
+      }
+    ]
+  },
+  {
+    "name": "東証グロース注目株",
+    "tickers": [
+      {
+        "symbol": "4385.T",
+        "name": "メルカリ",
+        "market": "JP"
+      },
+      {
+        "symbol": "4478.T",
+        "name": "freee",
+        "market": "JP"
+      },
+      {
+        "symbol": "3994.T",
+        "name": "マネーフォワード",
+        "market": "JP"
+      },
+      {
+        "symbol": "4443.T",
+        "name": "Sansan",
+        "market": "JP"
+      },
+      {
+        "symbol": "3923.T",
+        "name": "ラクス",
+        "market": "JP"
+      },
+      {
+        "symbol": "6027.T",
+        "name": "弁護士ドットコム",
+        "market": "JP"
+      },
+      {
+        "symbol": "4480.T",
+        "name": "メドレー",
+        "market": "JP"
+      },
+      {
+        "symbol": "4490.T",
+        "name": "ビザスク",
+        "market": "JP"
+      },
+      {
+        "symbol": "4477.T",
+        "name": "BASE",
+        "market": "JP"
+      },
+      {
+        "symbol": "4434.T",
+        "name": "サーバーワークス",
+        "market": "JP"
+      },
+      {
+        "symbol": "4382.T",
+        "name": "HEROZ",
+        "market": "JP"
+      },
+      {
+        "symbol": "3900.T",
+        "name": "クラウドワークス",
+        "market": "JP"
+      },
+      {
+        "symbol": "7370.T",
+        "name": "Enjin",
+        "market": "JP"
+      },
+      {
+        "symbol": "3993.T",
+        "name": "PKSHA Technology",
+        "market": "JP"
+      },
+      {
+        "symbol": "4011.T",
+        "name": "ヘッドウォータース",
+        "market": "JP"
+      },
+      {
+        "symbol": "5032.T",
+        "name": "ANYCOLOR",
+        "market": "JP"
+      },
+      {
+        "symbol": "3901.T",
+        "name": "マークラインズ",
+        "market": "JP"
+      },
+      {
+        "symbol": "7049.T",
+        "name": "識学",
+        "market": "JP"
+      },
+      {
+        "symbol": "7685.T",
+        "name": "BuySell Technologies",
+        "market": "JP"
+      },
+      {
+        "symbol": "4483.T",
+        "name": "JMDC",
+        "market": "JP"
+      },
+      {
+        "symbol": "288A.T",
+        "name": "ラクサス・テクノロジーズ",
+        "market": "JP"
+      },
+      {
+        "symbol": "2516.T",
+        "name": "iシェアーズ 東証グロース市場250指数 ETF",
+        "market": "JP"
+      },
+      {
+        "symbol": "1563.T",
+        "name": "東証グロース・コアETF",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "AIデータセンター",
+    "tickers": [
+      {
+        "symbol": "EQIX",
+        "name": "Equinix",
+        "market": "US"
+      },
+      {
+        "symbol": "DLR",
+        "name": "Digital Realty Trust",
+        "market": "US"
+      },
+      {
+        "symbol": "VRT",
+        "name": "Vertiv Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "ETN",
+        "name": "Eaton Corp",
+        "market": "US"
+      },
+      {
+        "symbol": "CEG",
+        "name": "Constellation Energy",
+        "market": "US"
+      },
+      {
+        "symbol": "VST",
+        "name": "Vistra Corp",
+        "market": "US"
+      },
+      {
+        "symbol": "ANET",
+        "name": "Arista Networks",
+        "market": "US"
+      },
+      {
+        "symbol": "MRVL",
+        "name": "Marvell Technology",
+        "market": "US"
+      },
+      {
+        "symbol": "COHR",
+        "name": "Coherent Corp",
+        "market": "US"
+      },
+      {
+        "symbol": "SMCI",
+        "name": "Super Micro Computer",
+        "market": "US"
+      },
+      {
+        "symbol": "GEV",
+        "name": "GE Vernova",
+        "market": "US"
+      },
+      {
+        "symbol": "PWR",
+        "name": "Quanta Services",
+        "market": "US"
+      },
+      {
+        "symbol": "3778.T",
+        "name": "さくらインターネット",
+        "market": "JP"
+      },
+      {
+        "symbol": "9449.T",
+        "name": "GMOインターネットグループ",
+        "market": "JP"
+      },
+      {
+        "symbol": "9432.T",
+        "name": "日本電信電話",
+        "market": "JP"
+      },
+      {
+        "symbol": "6701.T",
+        "name": "NEC",
+        "market": "JP"
+      },
+      {
+        "symbol": "6702.T",
+        "name": "富士通",
+        "market": "JP"
+      },
+      {
+        "symbol": "010120.KS",
+        "name": "LS Electric",
+        "market": "KR"
+      },
+      {
+        "symbol": "267260.KS",
+        "name": "Hyundai Electric & Energy",
+        "market": "KR"
+      },
+      {
+        "symbol": "6742.KL",
+        "name": "YTL Power International",
+        "market": "MY"
+      },
+      {
+        "symbol": "5347.KL",
+        "name": "Tenaga Nasional",
+        "market": "MY"
+      },
+      {
+        "symbol": "FPT.VN",
+        "name": "FPT Corporation",
+        "market": "VN"
+      },
+      {
+        "symbol": "ADVANC.BK",
+        "name": "Advanced Info Service",
+        "market": "TH"
+      }
+    ]
+  },
+  {
+    "name": "マイポートフォリオ",
+    "tickers": [
+      {
+        "symbol": "THD",
+        "name": "iShares MSCI Thailand ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "EWM",
+        "name": "iShares MSCI Malaysia ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "VNM",
+        "name": "VanEck Vietnam ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "EIDO",
+        "name": "iShares MSCI Indonesia ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "EWS",
+        "name": "iShares MSCI Singapore ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "EPHE",
+        "name": "iShares MSCI Philippines ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "EWY",
+        "name": "iShares MSCI South Korea ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "INDA",
+        "name": "iShares MSCI India ETF",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "マイリスト",
+    "tickers": [
+      {
+        "symbol": "6036.T",
+        "name": "キーパー技研",
+        "market": "JP"
+      },
+      {
+        "symbol": "INVE",
+        "name": "Identiv",
+        "market": "US"
+      },
+      {
+        "symbol": "GLDM",
+        "name": "SPDR Gold MiniShares Trust",
+        "market": "US"
+      },
+      {
+        "symbol": "1969.T",
+        "name": "高砂熱学工業",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "ドラッケンミラーPF",
+    "tickers": [
+      {
+        "symbol": "NTRA",
+        "name": "Natera",
+        "market": "US"
+      },
+      {
+        "symbol": "INSM",
+        "name": "Insmed",
+        "market": "US"
+      },
+      {
+        "symbol": "TEVA",
+        "name": "Teva Pharmaceutical",
+        "market": "US"
+      },
+      {
+        "symbol": "TSM",
+        "name": "Taiwan Semiconductor",
+        "market": "US"
+      },
+      {
+        "symbol": "CPNG",
+        "name": "Coupang",
+        "market": "US"
+      },
+      {
+        "symbol": "VST",
+        "name": "Vistra",
+        "market": "US"
+      },
+      {
+        "symbol": "MELI",
+        "name": "MercadoLibre",
+        "market": "US"
+      },
+      {
+        "symbol": "AMZN",
+        "name": "Amazon",
+        "market": "US"
+      },
+      {
+        "symbol": "DOCU",
+        "name": "DocuSign",
+        "market": "US"
+      },
+      {
+        "symbol": "GOOGL",
+        "name": "Alphabet",
+        "market": "US"
+      },
+      {
+        "symbol": "XLF",
+        "name": "Financial Select Sector SPDR",
+        "market": "US"
+      },
+      {
+        "symbol": "RSP",
+        "name": "Invesco S&P 500 Equal Weight ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "GC=F",
+        "name": "Gold Futures",
+        "market": "US"
+      },
+      {
+        "symbol": "HG=F",
+        "name": "Copper Futures",
+        "market": "US"
+      },
+      {
+        "symbol": "UAL",
+        "name": "United Airlines",
+        "market": "US"
+      },
+      {
+        "symbol": "DAL",
+        "name": "Delta Air Lines",
+        "market": "US"
+      },
+      {
+        "symbol": "AAL",
+        "name": "American Airlines",
+        "market": "US"
+      },
+      {
+        "symbol": "GS",
+        "name": "Goldman Sachs",
+        "market": "US"
+      },
+      {
+        "symbol": "EWZ",
+        "name": "iShares MSCI Brazil ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "AA",
+        "name": "Alcoa",
+        "market": "US"
+      },
+      {
+        "symbol": "BE",
+        "name": "Bloom Energy",
+        "market": "US"
+      },
+      {
+        "symbol": "8306.T",
+        "name": "三菱UFJフィナンシャル・グループ",
+        "market": "JP"
+      },
+      {
+        "symbol": "8316.T",
+        "name": "三井住友フィナンシャルグループ",
+        "market": "JP"
+      },
+      {
+        "symbol": "8058.T",
+        "name": "三菱商事",
+        "market": "JP"
+      },
+      {
+        "symbol": "7203.T",
+        "name": "トヨタ自動車",
+        "market": "JP"
+      },
+      {
+        "symbol": "6501.T",
+        "name": "日立製作所",
+        "market": "JP"
+      },
+      {
+        "symbol": "9984.T",
+        "name": "ソフトバンクグループ",
+        "market": "JP"
+      },
+      {
+        "symbol": "005930.KS",
+        "name": "サムスン電子",
+        "market": "KR"
+      },
+      {
+        "symbol": "000660.KS",
+        "name": "SKハイニックス",
+        "market": "KR"
+      }
+    ]
+  },
+  {
+    "name": "日本株インデックスETF",
+    "tickers": [
+      {
+        "symbol": "1306.T",
+        "name": "NEXT FUNDS TOPIX連動型上場投信",
+        "market": "JP"
+      },
+      {
+        "symbol": "1321.T",
+        "name": "NEXT FUNDS 日経225連動型上場投信",
+        "market": "JP"
+      },
+      {
+        "symbol": "2516.T",
+        "name": "東証グロース250ETF",
+        "market": "JP"
+      },
+      {
+        "symbol": "1570.T",
+        "name": "NEXT FUNDS 日経平均レバレッジ・インデックス連動型上場投信",
+        "market": "JP"
+      }
+    ]
+  },
+  {
+    "name": "戦時ポートフォリオ監視",
+    "tickers": [
+      {
+        "symbol": "XOM",
+        "name": "ExxonMobil",
+        "market": "US"
+      },
+      {
+        "symbol": "CVX",
+        "name": "Chevron",
+        "market": "US"
+      },
+      {
+        "symbol": "LNG",
+        "name": "Cheniere Energy",
+        "market": "US"
+      },
+      {
+        "symbol": "XLE",
+        "name": "Energy Select Sector SPDR ETF",
+        "market": "US"
+      },
+      {
+        "symbol": "LMT",
+        "name": "Lockheed Martin",
+        "market": "US"
+      },
+      {
+        "symbol": "NOC",
+        "name": "Northrop Grumman",
+        "market": "US"
+      },
+      {
+        "symbol": "GC=F",
+        "name": "Gold Futures",
+        "market": "US"
+      },
+      {
+        "symbol": "USDJPY=X",
+        "name": "USD/JPY",
+        "market": "US"
+      },
+      {
+        "symbol": "PBR",
+        "name": "Petrobras",
+        "market": "US"
+      }
+    ]
+  },
+  {
+    "name": "タンカー・海運",
+    "tickers": [
+      {
+        "symbol": "NAT",
+        "name": "Nordic American Tankers",
+        "market": "US"
+      },
+      {
+        "symbol": "FRO",
+        "name": "Frontline",
+        "market": "US"
+      },
+      {
+        "symbol": "STNG",
+        "name": "Scorpio Tankers",
+        "market": "US"
+      },
+      {
+        "symbol": "TNK",
+        "name": "Teekay Tankers",
+        "market": "US"
+      },
+      {
+        "symbol": "DHT",
+        "name": "DHT Holdings",
+        "market": "US"
+      },
+      {
+        "symbol": "INSW",
+        "name": "International Seaways",
+        "market": "US"
+      },
+      {
+        "symbol": "ASC",
+        "name": "Ardmore Shipping",
+        "market": "US"
+      },
+      {
+        "symbol": "HAFN",
+        "name": "Hafnia",
+        "market": "US"
+      },
+      {
+        "symbol": "TEN",
+        "name": "Tsakos Energy Navigation",
+        "market": "US"
+      },
+      {
+        "symbol": "CMBT",
+        "name": "CMB.Tech (旧Euronav)",
+        "market": "US"
+      }
+    ]
+  }
+]
